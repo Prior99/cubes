@@ -3,6 +3,7 @@ var Cube = function(obj) {
     this.distance = 0;
     this.scale = 1;
     this.rotation = 0;
+    this.alpha = 1;
     if(obj) {
         for(var key in obj) {
             this[key] = obj[key];

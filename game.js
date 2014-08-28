@@ -38,12 +38,12 @@ Game.prototype.start = function() {
 	for(var i = 0; i < 3; i++) {
 		var c = new Cube({
 			modelFile : "cube.js",
-			texture: "energy.png",
+			texture: "friend.png",
 			distance : 5,
 			rotation : (Math.PI * 2/3) * i,
 			tick:function(g) {
-				if(g.pressed.left) this.rotate(0.1);
-				if(g.pressed.right) this.rotate(-0.1);
+				if(g.pressed.left) this.rotate(0.03);
+				if(g.pressed.right) this.rotate(-0.03);
 			},
 			friend : true
 		});
@@ -75,9 +75,10 @@ Game.prototype.spawnEnemy = function() {
 		modelFile : "cube.js",
 		distance : 20,
 		rotation: a,
-		scale : 0.5,
+		texture : "enemy.png",
+		scale : 0.7,
 		tick : function(g) {
-			if(this.distance < 6.1 && this.distance > 5.9 && !this.killed) {
+			if(this.distance < 6 && this.distance > 4.7 && !this.killed) {
 				for(var c in g.cubes) {
 					var cube = g.cubes[c];
 					if(cube.friend && Math.abs(cube.rotation - this.rotation) < 0.22) {
@@ -86,11 +87,12 @@ Game.prototype.spawnEnemy = function() {
 				}
 			}
 			if(this.killed !== undefined) {
-				this.killed -= 0.05;
+				this.killed -= 0.01;
+				this.alpha = this.killed;
 				if(this.killed < 0) g.remove(this);
 			}
 			if(!this.killed) this.move(-0.05);
-			if(this.distance < 2) g.remove(this);
+			if(this.distance < 1) this.kill();
 		},
 		kill : function() {
 			this.killed = 1;

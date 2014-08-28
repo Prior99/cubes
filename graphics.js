@@ -16,7 +16,7 @@ var Graphics = function(width, height, cubes, gl, callback) {
         fragment : "shader.frag",
         vertex : "shader.vert"
     }, function() {
-        self.gl.clearColor(1.0, 1.0, 1.0, 1.0);
+        self.gl.clearColor(1., 1., 1., 1.0);
         self.gl.enable(self.gl.DEPTH_TEST);
         self.gl.enable(self.gl.BLEND);
         self.gl.blendFunc(self.gl.SRC_ALPHA, self.gl.ONE_MINUS_SRC_ALPHA);
@@ -122,6 +122,7 @@ Graphics.prototype.initShaders = function(shaders, callback) {
         self.shader.modelMatrixUniform = self.gl.getUniformLocation(self.shader, "uModelMatrix");
         self.shader.viewMatrixUniform = self.gl.getUniformLocation(self.shader, "uViewMatrix");
         self.shader.samplerUniform = self.gl.getUniformLocation(self.shader, "uSampler");
+        self.shader.alphaUniform = self.gl.getUniformLocation(self.shader, "uAlpha");
         callback();
     });
 };
@@ -179,6 +180,7 @@ Graphics.prototype.drawCubes = function() {
             this.gl.uniformMatrix4fv(this.shader.projectionMatrixUniform, false, this.projectionMatrix);
             this.gl.uniformMatrix4fv(this.shader.modelMatrixUniform, false, this.modelMatrix);
             this.gl.uniformMatrix4fv(this.shader.viewMatrixUniform, false, this.viewMatrix);
+            this.gl.uniform1f(this.shader.alphaUniform, cube.alpha);
             this.gl.drawElements(this.gl.TRIANGLES, cube.model.indexCount, this.gl.UNSIGNED_SHORT, 0);
             this.pop();
         }
