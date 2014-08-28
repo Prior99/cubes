@@ -16,12 +16,20 @@ var Graphics = function(width, height, cubes, gl, callback) {
         fragment : "shader.frag",
         vertex : "shader.vert"
     }, function() {
-        self.gl.clearColor(1., 1., 1., 1.0);
+        self.gl.clearColor(0, 0, 0, 0);
         self.gl.enable(self.gl.DEPTH_TEST);
         self.gl.enable(self.gl.BLEND);
         self.gl.blendFunc(self.gl.SRC_ALPHA, self.gl.ONE_MINUS_SRC_ALPHA);
         self.resize(width, height);
         callback();
+    });
+    this.backgroundPlane;
+    this.backgroundTexture;
+    this.loadModel("plane.js", function(model) {
+        self.backgroundPlane = model;
+    });
+    this.loadTexture("circle.png", function(tex) {
+        self.backgroundTexture = tex;
     });
 };
 
@@ -156,11 +164,33 @@ Graphics.prototype.redraw = function() {
     mat4.rotateZ(this.viewMatrix, this.viewMatrix, this.rotation[2]);
     mat4.translate(this.viewMatrix, this.viewMatrix, this.position);
     this.gl.uniform1i(this.shader.samplerUniform, 0);
+    if(this.backgroundPlane && this.backgroundTexture) {
+        this.push();
+        mat4.scale(this.modelMatrix, this.modelMatrix, [10.5, 10.5, 1]);
+        mat4.translate(this.modelMatrix, this.modelMatrix, [0, 0, -.6]);
+        this.drawModel(this.backgroundPlane, this.backgroundTexture, 1.);
+        this.pop();
+    }
     this.drawCubes();
     window.requestAnimationFrame(function() {
         self.redraw();
     });
 };
+
+Graphics.prototype.drawModel = function(model, texture, alpha) {
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, model.vertices);
+    this.gl.vertexAttribPointer(this.shader.vertexPositionAttribute, 3, this.gl.FLOAT, false, 0, 0);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, model.textureMap);
+    this.gl.vertexAttribPointer(this.shader.textureCoordAttribute, 2, this.gl.FLOAT, false, 0, 0);
+    this.gl.activeTexture(this.gl.TEXTURE0);
+    this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, model.faces);
+    this.gl.uniformMatrix4fv(this.shader.projectionMatrixUniform, false, this.projectionMatrix);
+    this.gl.uniformMatrix4fv(this.shader.modelMatrixUniform, false, this.modelMatrix);
+    this.gl.uniformMatrix4fv(this.shader.viewMatrixUniform, false, this.viewMatrix);
+    this.gl.uniform1f(this.shader.alphaUniform, alpha);
+    this.gl.drawElements(this.gl.TRIANGLES, model.indexCount, this.gl.UNSIGNED_SHORT, 0);
+}
 
 Graphics.prototype.drawCubes = function() {
     for(var c in this.cubes) {
@@ -170,18 +200,7 @@ Graphics.prototype.drawCubes = function() {
             mat4.rotateZ(this.modelMatrix, this.modelMatrix, cube.rotation);
             mat4.translate(this.modelMatrix, this.modelMatrix, [cube.distance, 0, 0]);
             mat4.scale(this.modelMatrix, this.modelMatrix, [cube.scale, cube.scale, cube.scale]);
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, cube.model.vertices);
-            this.gl.vertexAttribPointer(this.shader.vertexPositionAttribute, 3, this.gl.FLOAT, false, 0, 0);
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, cube.model.textureMap);
-            this.gl.vertexAttribPointer(this.shader.textureCoordAttribute, 2, this.gl.FLOAT, false, 0, 0);
-            this.gl.activeTexture(this.gl.TEXTURE0);
-            this.gl.bindTexture(this.gl.TEXTURE_2D, cube.boundTexture);
-            this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, cube.model.faces);
-            this.gl.uniformMatrix4fv(this.shader.projectionMatrixUniform, false, this.projectionMatrix);
-            this.gl.uniformMatrix4fv(this.shader.modelMatrixUniform, false, this.modelMatrix);
-            this.gl.uniformMatrix4fv(this.shader.viewMatrixUniform, false, this.viewMatrix);
-            this.gl.uniform1f(this.shader.alphaUniform, cube.alpha);
-            this.gl.drawElements(this.gl.TRIANGLES, cube.model.indexCount, this.gl.UNSIGNED_SHORT, 0);
+            this.drawModel(cube.model, cube.boundTexture, cube.alpha);
             this.pop();
         }
     }

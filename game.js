@@ -2,9 +2,11 @@ var CODE_LEFT = 37;
 var CODE_UP = 38;
 var CODE_RIGHT = 39;
 var CODE_DOWN = 40;
+var START_C = 120;
 
 var Game = function(cubes) {
 	var self = this;
+	this.speed = 0.02;
 	this.pressed = {
 		up: false,
 		down: false,
@@ -51,7 +53,18 @@ Game.prototype.start = function() {
 	}
 };
 
+Game.prototype.getKMH = function() {
+	return (this.speed * 60 * 3.6).toFixed(2) + "km/h";
+}
+
+Game.prototype.getCubesPerSecond = function() {
+	return ((1000 / 60) * 1000 / (START_C - 50 * 10 * this.speed)).toFixed(2) + "mc/s";
+}
+
+
 Game.prototype.tick = function() {
+	this.speed += 0.00001;
+	$("div[class='overlay']").html(this.getKMH() + "<br>" + this.getCubesPerSecond());
 	for(var c in this.cubes) {
 		var cube = this.cubes[c];
 		if(cube.tick !== undefined) {
@@ -59,7 +72,7 @@ Game.prototype.tick = function() {
 		}
 	}
 	this.tickNum++;
-	if(this.tickNum % 80 == 0) this.spawnEnemy();
+	if(parseInt(this.tickNum % (START_C - 50 * 10 * this.speed)) == 0) this.spawnEnemy();
 };
 
 Game.prototype.remove = function(cube) {
@@ -91,7 +104,7 @@ Game.prototype.spawnEnemy = function() {
 				this.alpha = this.killed;
 				if(this.killed < 0) g.remove(this);
 			}
-			if(!this.killed) this.move(-0.05);
+			if(!this.killed) this.move(-g.speed);
 			if(this.distance < 1) this.kill();
 		},
 		kill : function() {
