@@ -16,7 +16,7 @@ var Graphics = function(width, height, cubes, gl, callback) {
         fragment : "shader.frag",
         vertex : "shader.vert"
     }, function() {
-        self.gl.clearColor(0, 0, 0, 0);
+        self.gl.clearColor(1, 1, 1, 1);
         self.gl.enable(self.gl.DEPTH_TEST);
         self.gl.enable(self.gl.BLEND);
         self.gl.blendFunc(self.gl.SRC_ALPHA, self.gl.ONE_MINUS_SRC_ALPHA);

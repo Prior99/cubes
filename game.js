@@ -1,32 +1,11 @@
-var CODE_LEFT = 37;
-var CODE_UP = 38;
-var CODE_RIGHT = 39;
-var CODE_DOWN = 40;
 var START_C = 120;
 
 var Game = function(cubes) {
+	if(localStorage.points == undefined) localStorage.points = 0;
 	var self = this;
-	this.speed = 0.02;
-	this.pressed = {
-		up: false,
-		down: false,
-		left: false,
-		right: false
-	};
+	this.pressed = new Input();
+	this.speed = 0.1;
 	this.cubes = cubes;
-	document.addEventListener("keydown", function(e) {
-		if(e.which == CODE_UP) self.pressed.up = true;
-		if(e.which == CODE_DOWN) self.pressed.down = true;
-		if(e.which == CODE_LEFT) self.pressed.left = true;
-		if(e.which == CODE_RIGHT) self.pressed.right = true;
-	});
-	document.addEventListener("keyup", function(e) {
-		if(e.which == CODE_UP) self.pressed.up = false;
-		if(e.which == CODE_DOWN) self.pressed.down = false;
-		if(e.which == CODE_LEFT) self.pressed.left = false;
-		if(e.which == CODE_RIGHT) self.pressed.right = false;
-		console.log(e);
-	});
 };
 
 Game.prototype.start = function() {
@@ -64,7 +43,7 @@ Game.prototype.getCubesPerSecond = function() {
 
 Game.prototype.tick = function() {
 	this.speed += 0.00001;
-	$("div[class='overlay']").html(this.getKMH() + "<br>" + this.getCubesPerSecond());
+	$("div[class='overlay']").html(this.getKMH() + "<br>" + this.getCubesPerSecond() + "<br>" + localStorage.points);
 	for(var c in this.cubes) {
 		var cube = this.cubes[c];
 		if(cube.tick !== undefined) {
@@ -90,12 +69,14 @@ Game.prototype.spawnEnemy = function() {
 		rotation: a,
 		texture : "enemy.png",
 		scale : 0.7,
+		speed : this.speed,
 		tick : function(g) {
 			if(this.distance < 6 && this.distance > 4.7 && !this.killed) {
 				for(var c in g.cubes) {
 					var cube = g.cubes[c];
 					if(cube.friend && Math.abs(cube.rotation - this.rotation) < 0.22) {
 						this.kill();
+						localStorage.points++;
 					}
 				}
 			}
@@ -104,8 +85,8 @@ Game.prototype.spawnEnemy = function() {
 				this.alpha = this.killed;
 				if(this.killed < 0) g.remove(this);
 			}
-			if(!this.killed) this.move(-g.speed);
-			if(this.distance < 1) this.kill();
+			if(!this.killed) this.move(-this.speed);
+			if(this.distance < 1 && !this.killed) this.kill();
 		},
 		kill : function() {
 			this.killed = 1;
