@@ -21,24 +21,26 @@ Shop.prototype.setupOfferings = function() {
 	var self = this;
 	var overlay = $("div[class='overlay']");
 	for(var o in this.offerings) {
-		var offering = this.offerings[o];
-		overlay.append($("<button>" + offering.name + "</button>")
-			.click(function() {
-				getCube(offering.type, function(cube) {
-					cube.distance = 5;
-					cube.rotation = Math.PI;
-					cube.tick = function(g) {
-						if(g.pressed.left) this.rotate(0.03);
-						if(g.pressed.right) this.rotate(-0.03);
-					};
-					self.cubes[self.selected] = cube;
-					self.storage[self.selected] = {
-						type : offering.type,
-						properties : {}
-					};
-					self.select();
-				});
-			}));
+		(function() {
+			var offering = self.offerings[o];
+			overlay.append($("<button>" + offering.name + "</button>")
+				.click(function() {
+					getCube(offering.type, function(cube) {
+						cube.distance = 5;
+						cube.rotation = Math.PI;
+						cube.tick = function(g) {
+							if(g.pressed.left) this.rotate(0.03);
+							if(g.pressed.right) this.rotate(-0.03);
+						};
+						self.cubes[self.selected] = cube;
+						self.storage.cubes[self.selected] = {
+							type : offering.type,
+						};
+						self.storage.store();
+						self.select();
+					});
+				}));
+		})(o);
 	}
 };
 
@@ -55,16 +57,21 @@ Shop.prototype.start = function() {
 				alpha : 0.7
 			});
 			this.addCube(c, i);
+			if(i == 5) {
+				self.select();
+			}
 		}
 		else {
 			(function(i) {
 				getCube(type.type, function(cube) {
 					self.addCube(cube, i);
+					if(i == 5) {
+						self.select();
+					}
 				});
 			})(i);
 		}
 	}
-	this.select();
 	var self = this;
 	setInterval(function() {
 		window.requestAnimationFrame(function() {

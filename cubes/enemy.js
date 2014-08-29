@@ -11,9 +11,9 @@ function(callback) {
         if(cube.distance < 6 && cube.distance > 4.7 && !cube.killed) {
 			for(var c in game.cubes) {
 				var other = game.cubes[c];
-				if(other.friend && Math.abs(other.rotation - other.rotation) < 0.22) {
+				if(other.friend && Math.abs(other.rotation - cube.rotation) < 0.22) {
 					cube.kill();
-					localStorage.points++;
+                    other.damage(1);
 				}
 			}
 		}

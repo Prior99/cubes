@@ -6,6 +6,8 @@ var Game = function(cubes) {
 	this.pressed = new Input();
 	this.speed = 0.1;
 	this.cubes = cubes;
+	this.storage = new Storage();
+	this.storage.restore();
 };
 
 Game.prototype.start = function() {
@@ -16,11 +18,16 @@ Game.prototype.start = function() {
 			self.tick();
 		});
 	}, 1000/60);
-	for(var i = 0; i < 3; i++) {
-		getCube("infinite.js", function(cube) {
-			cube.rotation = (Math.PI * 2/3) * i;
-			self.cubes.push(cube);
-		});
+	for(var i = 0; i < 10; i++) {
+		(function(i) {
+			var cube = self.storage.cubes[i];
+			if(cube) {
+				getCube(cube.type, function(cube) {
+					cube.rotation = (Math.PI * 2/10) * i;
+					self.cubes.push(cube);
+				});
+			}
+		})(i);
 	}
 };
 
@@ -62,6 +69,7 @@ Game.prototype.spawnEnemy = function() {
 	    cube.speed = self.speed * (Math.random() / 2 + .75);
 	    cube.rotation = a;
 	    cube.distance = 20;
+		cube.normalizeRotation();
 		self.cubes.push(cube);
 	});
 };

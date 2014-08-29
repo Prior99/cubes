@@ -8,20 +8,20 @@ Storage.prototype.restore = function() {
         this.energyScore = 0;
         this.cubes = [{
             type : "infinite.js",
-            properties : {}
         }, null, null, null, null, null, null, null, null, null];
     }
     else {
-        this.cubeScore = localStorage.cubes.cubeScore;
-        this.energyScore = localStorage.cubes.energyScore;
-        this.cubes = localStorage.cubes.cubes;
+        var r = JSON.parse(localStorage.cubes);
+        this.cubeScore = r.cubeScore;
+        this.energyScore = r.energyScore;
+        this.cubes = r.cubes;
     }
 }
 
 Storage.prototype.store = function() {
-    localStorage.cubes = {
+    localStorage.cubes = JSON.stringify({
         cubeScore : this.cubeScore,
         energyScore : this.energyScore,
         cubes: this.cubes
-    };
+    });
 }

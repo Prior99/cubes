@@ -2,8 +2,8 @@ function(callback) {
     getCube("friend.js", function(cube) {
         cube.health = 10;
         cube.damage = function() {
-            this.health--;
-            if(this.health <= 0) this.kill();
+            cube.health--;
+            if(cube.health <= 0) cube.kill();
         }
         callback(cube);
     });
