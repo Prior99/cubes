@@ -7,6 +7,7 @@
         <script type="text/javascript" src="game.js"></script>
         <script type="text/javascript" src="shop.js"></script>
         <script type="text/javascript" src="input.js"></script>
+        <script type="text/javascript" src="storage.js"></script>
         <script type="text/javascript" src="initgl.js"></script>
         <script type="text/javascript" src="jquery-2.1.1.min.js"></script>
         <style type="text/css">
@@ -53,6 +54,37 @@
             var graphics, canvas, cubes;
             canvas = $("canvas")[0];
             cubes = [];
+
+            var cubeTypes = {};
+            var cubeTypesLoading = {};
+
+            function getCube(name, callback) {
+                if(cubeTypes[name] !== undefined) {
+                    cubeTypes[name](callback);
+                }
+                else {
+                    if(cubeTypesLoading[name] !== undefined) {
+                        cubeTypesLoading[name].push(callback);
+                    }
+                    else {
+                        cubeTypesLoading[name] = [callback];
+                        $.ajax({
+                            url : "cubes/" + name,
+                            dataType : "text",
+                            cache : false,
+                            success : function(res) {
+                                var c = eval("(" + res + ")");
+                                for(cb in cubeTypesLoading[name]) {
+                                    c(cubeTypesLoading[name][cb]);
+                                }
+                                cubeTypesLoading[name] = undefined;
+                                cubeTypes[name] = c;
+                            }
+                        });
+                    }
+                }
+            }
+
             function resize() {
                 graphics.resize(canvas.width = window.innerWidth, canvas.height = window.innerHeight);
             }
@@ -81,7 +113,7 @@
 
             function initShop() {
                 console.log("Initializing Shop...");
-                var shop = new Shop(cubes);
+                var shop = new Game(cubes);
                 resize();
                 console.log("Starting Graphics...");
                 graphics.start();
