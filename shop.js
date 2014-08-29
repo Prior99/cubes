@@ -16,7 +16,8 @@ Shop.prototype.start = function() {
 				if(g.pressed.left) this.rotate(0.03);
 				if(g.pressed.right) this.rotate(-0.03);
 			},
-			friend : true
+			friend : true,
+			alpha : 0.7
 		});
 		this.cubes.push(c);
 	}
