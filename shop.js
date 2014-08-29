@@ -2,24 +2,67 @@ var Shop = function(cubes) {
 	this.cubes = cubes;
 	this.pressed = new Input();
 	this.storage = new Storage();
+	this.storage.restore();
+	this.offerings = [{
+		type : "10.js",
+		energy : 0,
+		cubes : 10,
+		name : "x10"
+	},
+	{
+		type : "infinite.js",
+		energy : 0,
+		cubes : 10,
+		name : "Infinite"
+	}];
 }
 
+Shop.prototype.setupOfferings = function() {
+	var self = this;
+	var overlay = $("div[class='overlay']");
+	for(var o in this.offerings) {
+		var offering = this.offerings[o];
+		overlay.append($("<button>" + offering.name + "</button>")
+			.click(function() {
+				getCube(offering.type, function(cube) {
+					cube.distance = 5;
+					cube.rotation = Math.PI;
+					cube.tick = function(g) {
+						if(g.pressed.left) this.rotate(0.03);
+						if(g.pressed.right) this.rotate(-0.03);
+					};
+					self.cubes[self.selected] = cube;
+					self.storage[self.selected] = {
+						type : offering.type,
+						properties : {}
+					};
+					self.select();
+				});
+			}));
+	}
+};
+
 Shop.prototype.start = function() {
+	this.setupOfferings();
 	this.selected = 5;
+	var self = this;
 	for(var i = 0; i < 10; i++) {
-		var c = new Cube({
-			modelFile : "cube.js",
-			texture: "friend.png",
-			distance : 5,
-			rotation : (Math.PI*2/10)*i,
-			tick:function(g) {
-				if(g.pressed.left) this.rotate(0.03);
-				if(g.pressed.right) this.rotate(-0.03);
-			},
-			friend : true,
-			alpha : 0.7
-		});
-		this.cubes.push(c);
+		var type = this.storage.cubes[i];
+		if(type == undefined) {
+			var c = new Cube({
+				modelFile : "cube.js",
+				texture: "friend.png",
+				alpha : 0.7
+			});
+			this.addCube(c, i);
+		}
+		else {
+			(function(i) {
+				getCube(type.type, function(cube) {
+					self.addCube(cube, i);
+				});
+			})(i);
+		}
 	}
 	this.select();
 	var self = this;
@@ -28,6 +71,16 @@ Shop.prototype.start = function() {
 			self.tick();
 		});
 	}, 1000/60);
+}
+
+Shop.prototype.addCube = function(c, i) {
+	c.distance = 5;
+	c.rotation = (Math.PI*2/10)*i;
+	c.tick = function(g) {
+		if(g.pressed.left) this.rotate(0.03);
+		if(g.pressed.right) this.rotate(-0.03);
+	};
+	this.cubes[i] = c;
 }
 
 Shop.prototype.selectNext = function() {

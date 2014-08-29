@@ -6,7 +6,10 @@ Storage.prototype.restore = function() {
     if(localStorage.cubes === undefined) {
         this.cubeScore = 0;
         this.energyScore = 0;
-        this.cubes = [null, null, null, null, null, null, null, null, null, null];
+        this.cubes = [{
+            type : "infinite.js",
+            properties : {}
+        }, null, null, null, null, null, null, null, null, null];
     }
     else {
         this.cubeScore = localStorage.cubes.cubeScore;
