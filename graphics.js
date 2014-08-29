@@ -195,7 +195,7 @@ Graphics.prototype.drawModel = function(model, texture, alpha) {
 Graphics.prototype.drawCubes = function() {
     for(var c in this.cubes) {
         var cube = this.cubes[c];
-        if(cube.model) {
+        if(cube && cube.model) {
             this.push();
             mat4.rotateZ(this.modelMatrix, this.modelMatrix, cube.rotation);
             mat4.translate(this.modelMatrix, this.modelMatrix, [cube.distance, 0, 0]);
