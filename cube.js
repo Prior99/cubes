@@ -20,11 +20,18 @@ var Cube = function(obj) {
             });
         }
     });
-    graphics.loadTexture(this.texture, function(tex) {
+    /*graphics.loadTexture(this.texture, function(tex) {
         self.boundTexture = tex;
-    });
+    });*/
     this.normalizeRotation();
     if(this.init) this.init();
+};
+
+Cube.prototype.setTexture = function(tex) {
+    var self = this;
+    graphics.loadTexture(tex, function(tex) {
+        self.boundTexture = tex;
+    });
 };
 
 Cube.prototype.rotate = function(a) {

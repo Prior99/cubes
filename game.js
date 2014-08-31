@@ -1,7 +1,6 @@
 var START_C = 120;
 
 var Game = function(cubes) {
-	if(localStorage.points == undefined) localStorage.points = 0;
 	var self = this;
 	this.pressed = new Input();
 	this.speed = 0.1;
