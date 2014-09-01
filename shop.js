@@ -3,13 +3,53 @@ var Shop = function(cubes) {
 	this.pressed = new Input();
 	this.storage = new Storage();
 	this.storage.restore();
-	this.offerings = [{
+	this.offerings = [
+	{
+		type : "05.js",
+		energy : 0,
+		cubes : 10,
+		name : "x5"
+	}, {
 		type : "10.js",
 		energy : 0,
 		cubes : 10,
 		name : "x10"
-	},
-	{
+	}, {
+		type : "20.js",
+		energy : 0,
+		cubes : 10,
+		name : "x20"
+	}, {
+		type : "50.js",
+		energy : 0,
+		cubes : 10,
+		name : "x50"
+	}, {
+		type : "75.js",
+		energy : 0,
+		cubes : 10,
+		name : "x75"
+	}, {
+		type : "100.js",
+		energy : 0,
+		cubes : 10,
+		name : "x100"
+	}, {
+		type : "heal.js",
+		energy : 0,
+		cubes : 10,
+		name : "Heal x5"
+	}, {
+		type : "heal_20.js",
+		energy : 0,
+		cubes : 10,
+		name : "Heal x20"
+	}, {
+		type : "multiply.js",
+		energy : 0,
+		cubes : 10,
+		name : "Multiply"
+	}, {
 		type : "infinite.js",
 		energy : 0,
 		cubes : 10,
@@ -53,9 +93,9 @@ Shop.prototype.start = function() {
 		if(type == undefined) {
 			var c = new Cube({
 				modelFile : "cube.js",
-				texture: "friend.png",
-				alpha : 0.7
+				alpha : 0.9
 			});
+			c.setTexture("default.png"),
 			this.addCube(c, i);
 			if(i == 5) {
 				self.select();

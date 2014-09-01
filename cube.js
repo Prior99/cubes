@@ -14,9 +14,11 @@ var Cube = function(obj) {
     }
     graphics.loadModel(this.modelFile, function(model) {
         self.model = model;
-        if(!self.texture && self.model && self.model.texture) {
+        if(self.model && self.model.texture) {
             graphics.loadTexture(self.model.texture, function(tex) {
-                self.boundTexture = tex;
+                if(!self.boundTexture) {
+                    self.boundTexture = tex;
+                }
             });
         }
     });
