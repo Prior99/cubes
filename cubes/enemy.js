@@ -8,7 +8,7 @@ function(callback) {
         speed : 0.01
     });
     cube.addTickHandler(function(game) {
-        if(cube.distance < 6 && cube.distance > 4.7 && !cube.killed) {
+        if(cube.distance < 6 && cube.distance > 5.8 && !cube.killed) {
 			for(var c in game.cubes) {
 				var other = game.cubes[c];
 				if(other.friend && Math.abs(other.rotation - cube.rotation) < 0.22) {

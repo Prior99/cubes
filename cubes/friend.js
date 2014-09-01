@@ -3,7 +3,7 @@ function(callback) {
         distance : 5,
         texture : "friend.png",
         friend : true,
-        speed : 0.03,
+        speed : 0.045,
         rotation : 0,
         health : 0
     });
