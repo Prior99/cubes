@@ -9,6 +9,7 @@
         <script type="text/javascript" src="input.js"></script>
         <script type="text/javascript" src="storage.js"></script>
         <script type="text/javascript" src="initgl.js"></script>
+        <script type="text/javascript" src="menu.js"></script>
         <script type="text/javascript" src="jquery-2.1.1.min.js"></script>
         <style type="text/css">
             body {
@@ -47,7 +48,6 @@
     </head>
     <body>
         <div class="overlay">
-            HALLO
         </div>
         <canvas width="800" height="600"></canvas>
         <script type="text/javascript">
@@ -94,34 +94,45 @@
             }, false);
 
             function initGraphics(gl) {
-                console.log("Initializing Graphics...");
-                graphics = new Graphics(canvas.width, canvas.height, cubes, gl, initGame);
+                graphics = new Graphics(canvas.width, canvas.height, cubes, gl, initMenu);
             }
 
             function initGame() {
-                console.log("Initializing Game...");
-                var game = new Game(cubes);
-                resize();
-                console.log("Starting Graphics...");
-                graphics.start();
-                //graphics.setRotation(Math.PI/2, 0, 0);
-                graphics.setPosition(0, 0, -20);
-                console.log("Starting Game...");
-                game.start();
-                console.log("Everything up and running!");
             }
 
             function initShop() {
-                console.log("Initializing Shop...");
                 var shop = new Shop(cubes);
                 resize();
-                console.log("Starting Graphics...");
                 graphics.start();
-                //graphics.setRotation(Math.PI/2, 0, 0);
                 graphics.setPosition(10, 0, -20);
-                console.log("Starting Shop...");
                 shop.start();
-                console.log("Everything up and running!");
+            }
+			
+            function initMenu() {
+                var menu = new Menu(cubes);
+                resize();
+                graphics.start();
+				menu.addEntry({
+					name : "Game",
+					method : function() {
+						menu.destroy();
+						var game = new Game(cubes);
+						graphics.start();
+						graphics.setPosition(0, 0, -20);
+						game.start();
+					}
+				});
+				menu.addEntry({
+					name : "Shop",
+					method : function() {
+						menu.destroy();
+						var shop = new Shop(cubes);
+						graphics.start();
+						graphics.setPosition(10, 0, -20);
+						shop.start();
+					}
+				});
+                menu.start();
             }
             initGL(canvas, initGraphics);
         </script>

@@ -1,12 +1,12 @@
 function(callback) {
     var cube = new Cube({
-    	texture : "enemy.png",
     	scale : 0.7,
         enemy : true,
         distance : 20,
         rotation : 0,
         speed : 0.01
     });
+	cube.setTexture("enemy.png");
     cube.addTickHandler(function(game) {
         if(cube.distance < 6 && cube.distance > 5.8 && !cube.killed) {
 			for(var c in game.cubes) {

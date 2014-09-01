@@ -1,7 +1,6 @@
 function(callback) {
     var cube = new Cube({
         distance : 5,
-        texture : "friend.png",
         friend : true,
         speed : 0.045,
         rotation : 0,
