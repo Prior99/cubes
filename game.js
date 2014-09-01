@@ -1,12 +1,19 @@
 var START_C = 120;
 
-var Game = function(cubes) {
+var Game = function(cubes, underlay) {
 	var self = this;
+	this.underlay = underlay;
+	this.ctx = this.underlay.getContext("2d");
 	this.pressed = new Input();
 	this.speed = 0.1;
 	this.cubes = cubes;
 	this.storage = new Storage();
 	this.storage.restore();
+};
+
+Game.prototype.setHP = function(hp) {
+	this.hp = hp;
+	this.initialHP = hp;
 };
 
 Game.prototype.start = function() {
@@ -28,6 +35,10 @@ Game.prototype.start = function() {
 			}
 		})(i);
 	}
+	this.redrawHUD();
+	window.addEventListener('resize', function() {
+		self.redrawHUD();
+	});
 };
 
 Game.prototype.getKMH = function() {
@@ -52,6 +63,33 @@ Game.prototype.tick = function() {
 	}
 	this.tickNum++;
 	if(parseInt(this.tickNum % (START_C - 50 * 10 * this.speed)) == 0) this.spawnEnemy();
+};
+
+Game.prototype.damage = function() {
+	this.hp --;
+	this.redrawHUD();
+};
+
+Game.prototype.redrawHUD = function() {
+	var ctx = this.ctx;
+	ctx.lineWidth = 1;
+	var size = Math.min(this.underlay.height, this.underlay.width)/10;
+	ctx.clearRect(this.underlay.width / 2 - size, this.underlay.height / 2 - size, size*2, size*2);
+	ctx.font = size+"px Verdana";
+	ctx.strokeStyle = "black";
+	ctx.fillStyle = "#ffcb2d";
+	ctx.textAlign = "center";
+	ctx.fillText(this.hp, this.underlay.width/2, this.underlay.height/2 + size * 2/5);
+	ctx.strokeText(this.hp, this.underlay.width/2, this.underlay.height/2 + size * 2/5);
+	ctx.beginPath();
+	ctx.arc(this.underlay.width/2, this.underlay.height/2, size, 0, Math.PI*2);
+	ctx.lineWidth = 10;
+	ctx.stroke();
+	ctx.strokeStyle = "#ffcb2d";
+	ctx.beginPath();
+	ctx.arc(this.underlay.width/2, this.underlay.height/2, size, 0, Math.PI*2*(this.hp/this.initialHP));
+	ctx.lineWidth -= 2;
+	ctx.stroke();
 };
 
 Game.prototype.remove = function(cube) {

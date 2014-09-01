@@ -49,10 +49,11 @@
     <body>
         <div class="overlay">
         </div>
-        <canvas width="800" height="600"></canvas>
+        <canvas width="800" height="600" id="canvas"></canvas>
+        <canvas width="800" height="600" id="underlay"></canvas>
         <script type="text/javascript">
             var graphics, canvas, cubes;
-            canvas = $("canvas")[0];
+            canvas = $("#canvas")[0];
             cubes = [];
 
             var cubeTypes = {};
@@ -87,6 +88,7 @@
 
             function resize() {
                 graphics.resize(canvas.width = window.innerWidth, canvas.height = window.innerHeight);
+                underlay.width = window.innerWidth, underlay.height = window.innerHeight
             }
 
             window.addEventListener('resize', function() {
@@ -97,9 +99,6 @@
                 graphics = new Graphics(canvas.width, canvas.height, cubes, gl, initMenu);
             }
 
-            function initGame() {
-            }
-
             function initShop() {
                 var shop = new Shop(cubes);
                 resize();
@@ -107,7 +106,7 @@
                 graphics.setPosition(10, 0, -20);
                 shop.start();
             }
-			
+
             function initMenu() {
                 var menu = new Menu(cubes);
                 resize();
@@ -116,9 +115,10 @@
 					name : "Game",
 					method : function() {
 						menu.destroy();
-						var game = new Game(cubes);
+						var game = new Game(cubes, underlay);
+                        game.setHP(10);
 						graphics.start();
-						graphics.setPosition(0, 0, -20);
+						graphics.setPosition(0, 0, -25);
 						game.start();
 					}
 				});
@@ -128,7 +128,7 @@
 						menu.destroy();
 						var shop = new Shop(cubes);
 						graphics.start();
-						graphics.setPosition(10, 0, -20);
+						graphics.setPosition(5, 0, -12);
 						shop.start();
 					}
 				});

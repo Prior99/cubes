@@ -18,7 +18,10 @@ function(callback) {
 			}
 		}
 		if(!cube.killed) cube.move(-cube.speed);
-		if(cube.distance < 1 && !cube.killed) cube.kill();
+		if(cube.distance < 1 && !cube.killed) {
+            cube.kill();
+            game.damage();
+        }
     });
     callback(cube);
 }
