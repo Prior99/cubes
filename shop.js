@@ -65,30 +65,37 @@ Shop.prototype.setupOfferings = function() {
 			var offering = self.offerings[o];
 			overlay.append($("<button>" + offering.name + "</button>")
 				.click(function() {
+					if(self.rotating) return;
+					self.block();
 					getCube(offering.type, function(cube) {
 						cube.distance = 5;
 						cube.rotation = Math.PI;
-						cube.tick = function(g) {
-							if(g.pressed.left) this.rotate(0.03);
-							if(g.pressed.right) this.rotate(-0.03);
-						};
 						self.cubes[self.selected] = cube;
 						self.storage.cubes[self.selected] = {
 							type : offering.type,
 						};
 						self.storage.store();
 						self.select();
+						self.unblock();
 					});
 				}));
 		})(o);
 	}
 };
 
+Shop.prototype.block = function() {
+	this.blocked = true;
+};
+
+Shop.prototype.unblock = function() {
+	this.blocked = false;
+};
+
 Shop.prototype.start = function() {
 	this.setupOfferings();
-	this.selected = 5;
+	this.selected = parseInt(this.storage.cubes.length/2);
 	var self = this;
-	for(var i = 0; i < 10; i++) {
+	for(var i = 0; i < this.storage.cubes.length; i++) {
 		var type = this.storage.cubes[i];
 		if(type == undefined) {
 			var c = new Cube({
@@ -97,7 +104,7 @@ Shop.prototype.start = function() {
 			});
 			c.setTexture("default.png"),
 			this.addCube(c, i);
-			if(i == 5) {
+			if(i == self.selected) {
 				self.select();
 			}
 		}
@@ -105,7 +112,7 @@ Shop.prototype.start = function() {
 			(function(i) {
 				getCube(type.type, function(cube) {
 					self.addCube(cube, i);
-					if(i == 5) {
+					if(i == self.selected) {
 						self.select();
 					}
 				});
@@ -122,19 +129,15 @@ Shop.prototype.start = function() {
 
 Shop.prototype.addCube = function(c, i) {
 	c.distance = 5;
-	c.rotation = (Math.PI*2/10)*i;
-	c.tick = function(g) {
-		if(g.pressed.left) this.rotate(0.03);
-		if(g.pressed.right) this.rotate(-0.03);
-	};
+	c.rotation = (Math.PI*2/this.storage.cubes.length)*i;
 	this.cubes[i] = c;
 }
 
 Shop.prototype.selectNext = function() {
 	this.rotateRight();
 	this.unselect();
-	if(++this.selected >= 10) {
-		this.selected -= 10;
+	if(++this.selected >= this.storage.cubes.length) {
+		this.selected -= this.storage.cubes.length;
 	}
 	this.select();
 }
@@ -143,12 +146,13 @@ Shop.prototype.selectPrevious = function() {
 	this.rotateLeft();
 	this.unselect();
 	if(--this.selected < 0) {
-		this.selected += 10;
+		this.selected += this.storage.cubes.length;
 	}
 	this.select();
 }
 
 Shop.prototype.unselect = function() {
+	if(this.cubeUnselect) this.cubeUnselect.cube.move(0.3*this.cubeUnselect.ticks);
 	this.cubeUnselect = {
 		cube : this.cubes[this.selected],
 		ticks : 10
@@ -156,6 +160,7 @@ Shop.prototype.unselect = function() {
 }
 
 Shop.prototype.select = function() {
+	if(this.cubeSelect) this.cubeSelect.cube.move(0.3*this.cubeSelect.ticks);
 	this.cubeSelect = {
 		cube : this.cubes[this.selected],
 		ticks : 10
@@ -163,11 +168,14 @@ Shop.prototype.select = function() {
 }
 
 Shop.prototype.tick = function() {
-	if(this.pressed.left && !this.rotating) {
-		this.selectNext();
-	}
-	if(this.pressed.right && !this.rotating) {
-		this.selectPrevious();
+	if(this.blocked) return;
+	if(!this.rotating) {
+		if(this.pressed.left ) {
+			this.selectNext();
+		}
+		if(this.pressed.right) {
+			this.selectPrevious();
+		}
 	}
 	if(this.rotating) {
 		this.rotating--;
@@ -175,7 +183,7 @@ Shop.prototype.tick = function() {
 			for(var c in this.cubes) {
 				var cube = this.cubes[c];
 				if(cube) {
-					this.cubes[c].rotate(Math.PI * 2/(15 * 10) * this.dir);
+					this.cubes[c].rotate(Math.PI * 2/(15 * this.storage.cubes.length) * this.dir);
 				}
 			}
 		}

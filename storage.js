@@ -8,7 +8,7 @@ Storage.prototype.restore = function() {
         this.energyScore = 0;
         this.cubes = [{
             type : "infinite.js",
-        }, null, null, null, null, null, null, null, null, null];
+        }, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
     }
     else {
         var r = JSON.parse(localStorage.cubes);

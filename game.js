@@ -24,12 +24,12 @@ Game.prototype.start = function() {
 			self.tick();
 		});
 	}, 1000/60);
-	for(var i = 0; i < 10; i++) {
+	for(var i = 0; i < self.storage.cubes.length; i++) {
 		(function(i) {
 			var cube = self.storage.cubes[i];
 			if(cube) {
 				getCube(cube.type, function(cube) {
-					cube.rotation = (Math.PI * 2/10) * i;
+					cube.rotation = (Math.PI * 2/self.storage.cubes.length) * i;
 					self.cubes.push(cube);
 				});
 			}
