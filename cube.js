@@ -68,7 +68,9 @@ Cube.prototype.damage = function() {
 };
 
 Cube.prototype.kill = function() {
-	this.killed = 1;
+    if(this.killed === undefined) {
+        this.killed = 1;
+    }
 };
 
 Cube.prototype.tick = function(game) {
