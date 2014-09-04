@@ -24,7 +24,7 @@
             canvas {
                 position: absolute;
                 left: 0;
-                right: 0;
+                top: 0;
                 z-index: 50;
                 background: transparent;
             }
@@ -36,10 +36,65 @@
             canvas.overlay {
                 z-index: 75;
             }
+
+            div#wrapper {
+                position: absolute;
+                left: 0;
+                top: 0;
+                margin-left: 50px;
+                z-index: 100;
+                overflow: hidden;
+                text-align: left;
+                width: 500px;
+            }
+
+            div.button {
+                display: block;
+                width: 200px;
+                height: 30px;
+                color: white;
+                margin-top: 30px;
+                font-size: 15pt;
+                transition: color .2s linear;
+            }
+
+            div.button div.description {
+                font-size: 12pt;
+                padding: 5px;
+                width: 0px;
+                opacity: 0;
+                color: #ccc;
+                transition: opacity 0.5s ease-out;
+                float: right;
+                overflow: hidden;
+                height: 0;
+                visibility: hidden;
+            }
+
+            div.button div.name {
+                width: 150px;
+                float: left;
+                cursor: pointer;
+                cursor: hand;
+            }
+
+            div.button:hover {
+                color: #ffcb2d;
+                width: 420px;
+            }
+
+            div.button:hover div.description {
+                display: block;
+                opacity: 1;
+                height: auto;
+                width: 250px;
+                visibility: visible;
+            }
+
         </style>
     </head>
     <body>
-        <div class="overlay">
+        <div id="wrapper">
         </div>
         <canvas width="800" height="600" id="canvas"></canvas>
         <canvas width="800" height="600" id="hud"></canvas>
@@ -106,6 +161,7 @@
                 graphics.start();
 				menu.addEntry({
 					name : "Game",
+                    description : "Start a new game with your current selection of cubes.",
 					method : function() {
 						menu.destroy();
 						var game = new Game(cubes, hud);
@@ -117,6 +173,7 @@
 				});
 				menu.addEntry({
 					name : "Shop",
+                    description : "Buy new cubes to boost up your ring with points earned from playing games.",
 					method : function() {
 						menu.destroy();
 						var shop = new Shop(cubes);

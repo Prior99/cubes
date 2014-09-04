@@ -59,11 +59,13 @@ var Shop = function(cubes) {
 
 Shop.prototype.setupOfferings = function() {
 	var self = this;
-	var overlay = $("div[class='overlay']");
+	var overlay = $("#wrapper");
 	for(var o in this.offerings) {
 		(function() {
 			var offering = self.offerings[o];
-			overlay.append($("<button>" + offering.name + "</button>")
+			overlay.append($("<div class='button'></div>")
+				.append("<div class='name'>" + offering.name + "</div>")
+				.append("<div class='description'>"+offering.description+"</div>")
 				.click(function() {
 					if(self.rotating) return;
 					self.block();
@@ -78,7 +80,8 @@ Shop.prototype.setupOfferings = function() {
 						self.select();
 						self.unblock();
 					});
-				}));
+				})
+			);
 		})(o);
 	}
 };
