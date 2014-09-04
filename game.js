@@ -12,6 +12,17 @@ var Game = function(cubes, underlay) {
 	this.storage.restore();
 };
 
+Game.prototype.giveRed = function() {
+	this.storage.red ++;
+	this.redrawHUD();
+};
+
+
+Game.prototype.giveBlue = function() {
+	this.storage.blue ++;
+	this.redrawHUD();
+};
+
 Game.prototype.gameover = function() {
 	this.underlay.className = "overlay";
 	var ctx = this.ctx;
@@ -26,6 +37,7 @@ Game.prototype.gameover = function() {
 	ctx.fillText(text, this.underlay.width/2, this.underlay.height/2 + size * 2/5);
 	ctx.strokeText(text, this.underlay.width/2, this.underlay.height/2 + size * 2/5);
 	clearInterval(this.interval);
+	this.storage.store();
 
 };
 
@@ -92,13 +104,25 @@ Game.prototype.redrawHUD = function() {
 	var ctx = this.ctx;
 	ctx.lineWidth = 1;
 	var size = Math.min(this.underlay.height, this.underlay.width)/10;
-	ctx.clearRect(this.underlay.width / 2 - size, this.underlay.height / 2 - size, size*2, size*2);
+	ctx.clearRect(0, 0, this.underlay.width, this.underlay.height);
 	ctx.font = size+"px Verdana";
 	ctx.strokeStyle = "black";
+	//Red
+	ctx.fillStyle = "#ff5555";
+	ctx.textAlign = "right";
+	ctx.fillText(this.storage.red, this.underlay.width/2, this.underlay.height*3/4 + size * 2/5);
+	ctx.strokeText(this.storage.red, this.underlay.width/2, this.underlay.height*3/4 + size * 2/5);
+	//Blue
+	ctx.fillStyle = "#5555ff";
+	ctx.textAlign = "left";
+	ctx.fillText(this.storage.blue, this.underlay.width/2, this.underlay.height*3/4 + size * 2/5);
+	ctx.strokeText(this.storage.blue, this.underlay.width/2, this.underlay.height*3/4 + size * 2/5);
+	//Lifes
 	ctx.fillStyle = "#ffcb2d";
 	ctx.textAlign = "center";
 	ctx.fillText(this.hp, this.underlay.width/2, this.underlay.height/2 + size * 2/5);
 	ctx.strokeText(this.hp, this.underlay.width/2, this.underlay.height/2 + size * 2/5);
+	//Circles
 	ctx.beginPath();
 	ctx.arc(this.underlay.width/2, this.underlay.height/2, size, 0, Math.PI*2);
 	ctx.lineWidth = 10;

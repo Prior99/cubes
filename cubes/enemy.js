@@ -18,6 +18,7 @@ function(callback) {
                     Math.abs(other.rotation - cube.rotation - Math.PI * 2) < threshold
                 )) {
 					cube.kill();
+                    game.giveRed();
                     other.damage(1);
 				}
 			}

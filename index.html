@@ -196,25 +196,25 @@
 					name : "Game",
                     description : "Start a new game with your current selection of cubes.",
 					method : function() {
+                        stopAnimation();
                         $("#wrapper").css({"visibility" : "hidden"});
 						menu.destroy();
 						var game = new Game(cubes, hud);
                         game.setHP(10);
 						graphics.setPosition(0, 0, -25);
 						game.start();
-                        stopAnimation();
 					}
 				});
 				menu.addEntry({
 					name : "Shop",
                     description : "Buy new cubes to boost up your ring with points earned from playing games.",
 					method : function() {
+                        stopAnimation();
 						menu.destroy();
 						var shop = new Shop(cubes);
                         graphics.displayRing();
 						graphics.setPosition(5, 0, -12);
 						shop.start();
-                        stopAnimation();
 					}
 				});
                 menu.start();

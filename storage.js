@@ -4,24 +4,24 @@ var Storage = function() {
 
 Storage.prototype.restore = function() {
     if(localStorage.cubes === undefined) {
-        this.cubeScore = 0;
-        this.energyScore = 0;
         this.cubes = [{
             type : "infinite.js",
         }, null, null, null, null, null, null, null, null, null, null, null];
+        this.red = 0;
+        this.blue = 0;
     }
     else {
         var r = JSON.parse(localStorage.cubes);
-        this.cubeScore = r.cubeScore;
-        this.energyScore = r.energyScore;
+        this.red = r.red;
+        this.blue = r.blue;
         this.cubes = r.cubes;
     }
 }
 
 Storage.prototype.store = function() {
     localStorage.cubes = JSON.stringify({
-        cubeScore : this.cubeScore,
-        energyScore : this.energyScore,
+        red : this.red,
+        blue : this.blue,
         cubes: this.cubes
     });
 }

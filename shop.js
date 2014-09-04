@@ -155,7 +155,9 @@ Shop.prototype.selectPrevious = function() {
 }
 
 Shop.prototype.unselect = function() {
-	if(this.cubeUnselect) this.cubeUnselect.cube.move(0.3*this.cubeUnselect.ticks);
+	if(this.cubeUnselect && this.cubeUnselect.cube) {
+		this.cubeUnselect.cube.move(0.3*this.cubeUnselect.ticks);
+	}
 	this.cubeUnselect = {
 		cube : this.cubes[this.selected],
 		ticks : 10
@@ -163,7 +165,9 @@ Shop.prototype.unselect = function() {
 }
 
 Shop.prototype.select = function() {
-	if(this.cubeSelect) this.cubeSelect.cube.move(0.3*this.cubeSelect.ticks);
+	if(this.cubeSelect && this.cubeSelect.cube) {
+		this.cubeSelect.cube.move(0.3*this.cubeSelect.ticks);
+	}
 	this.cubeSelect = {
 		cube : this.cubes[this.selected],
 		ticks : 10
