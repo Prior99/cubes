@@ -196,6 +196,7 @@
 					name : "Game",
                     description : "Start a new game with your current selection of cubes.",
 					method : function() {
+                        $("#wrapper").css({"visibility" : "hidden"});
 						menu.destroy();
 						var game = new Game(cubes, hud);
                         game.setHP(10);

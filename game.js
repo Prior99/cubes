@@ -69,7 +69,6 @@ Game.prototype.getCubesPerSecond = function() {
 
 Game.prototype.tick = function() {
 	this.speed += 0.00001;
-	$("div[class='overlay']").html(this.getKMH() + "<br>" + this.getCubesPerSecond() + "<br>" + localStorage.points);
 	var remove = [];
 	for(var c in this.cubes) {
 		var cube = this.cubes[c];
