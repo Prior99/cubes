@@ -17,6 +17,7 @@
                 padding: 0;
                 width: 100%;
                 height: 100%;
+                background: rgb(51, 51, 51);
                 overflow: hidden;
             }
 
@@ -25,24 +26,15 @@
                 left: 0;
                 right: 0;
                 z-index: 50;
+                background: transparent;
             }
 
-            div.underlay {
-                position: absolute;
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                height: 100%;
-                z-index: 0;
+            canvas.underlay {
+                z-index: 25;
             }
 
-            div.overlay {
-                position: absolute;
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                height: 100%;
-                z-index: 100;
+            canvas.overlay {
+                z-index: 75;
             }
         </style>
     </head>
@@ -50,10 +42,11 @@
         <div class="overlay">
         </div>
         <canvas width="800" height="600" id="canvas"></canvas>
-        <canvas width="800" height="600" id="underlay"></canvas>
+        <canvas width="800" height="600" id="hud"></canvas>
         <script type="text/javascript">
-            var graphics, canvas, cubes;
+            var graphics, canvas, cubes, hud;
             canvas = $("#canvas")[0];
+            hud = $("#hud")[0];
             cubes = [];
 
             var cubeTypes = {};
@@ -88,7 +81,7 @@
 
             function resize() {
                 graphics.resize(canvas.width = window.innerWidth, canvas.height = window.innerHeight);
-                underlay.width = window.innerWidth, underlay.height = window.innerHeight
+                hud.width = window.innerWidth, hud.height = window.innerHeight
             }
 
             window.addEventListener('resize', function() {
@@ -115,7 +108,7 @@
 					name : "Game",
 					method : function() {
 						menu.destroy();
-						var game = new Game(cubes, underlay);
+						var game = new Game(cubes, hud);
                         game.setHP(10);
 						graphics.start();
 						graphics.setPosition(0, 0, -25);

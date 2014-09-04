@@ -3,12 +3,30 @@ var START_C = 120;
 var Game = function(cubes, underlay) {
 	var self = this;
 	this.underlay = underlay;
+	this.underlay.className = "underlay";
 	this.ctx = this.underlay.getContext("2d");
 	this.pressed = new Input();
 	this.speed = 0.1;
 	this.cubes = cubes;
 	this.storage = new Storage();
 	this.storage.restore();
+};
+
+Game.prototype.gameover = function() {
+	this.underlay.className = "overlay";
+	var ctx = this.ctx;
+	ctx.clearRect(0, 0, this.underlay.width, this.underlay.height);
+	var size = 120;
+	var text = "Game Over";
+	ctx.font = size+"px Verdana";
+	ctx.strokeStyle = "black";
+	ctx.fillStyle = "#ff5555";
+	ctx.lineWidth = 1;
+	ctx.textAlign = "center";
+	ctx.fillText(text, this.underlay.width/2, this.underlay.height/2 + size * 2/5);
+	ctx.strokeText(text, this.underlay.width/2, this.underlay.height/2 + size * 2/5);
+	clearInterval(this.interval);
+
 };
 
 Game.prototype.setHP = function(hp) {
@@ -19,7 +37,7 @@ Game.prototype.setHP = function(hp) {
 Game.prototype.start = function() {
 	var self = this;
 	this.tickNum = 0;
-	setInterval(function() {
+	this.interval = setInterval(function() {
 		window.requestAnimationFrame(function() {
 			self.tick();
 		});
@@ -68,6 +86,7 @@ Game.prototype.tick = function() {
 Game.prototype.damage = function() {
 	this.hp --;
 	this.redrawHUD();
+	if(this.hp < 0) this.gameover();
 };
 
 Game.prototype.redrawHUD = function() {
