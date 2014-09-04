@@ -37,6 +37,10 @@ var Graphics = function(width, height, cubes, gl, callback) {
     });
 };
 
+Graphics.prototype.displayRing = function() {
+    this.ring = true;
+};
+
 Graphics.prototype.pop = function() {
     if(this.modelMatrixStack.length == 0) {
         throw "Could not pop on empty stack!";
@@ -171,7 +175,7 @@ Graphics.prototype.redraw = function() {
     mat4.translate(this.viewMatrix, this.viewMatrix, this.position);
     this.gl.uniform1i(this.shader.samplerUniform, 0);
     this.gl.uniform1i(this.shader.samplerUniform2, 1);
-    if(this.backgroundPlane && this.backgroundTexture) {
+    if(this.ring && this.backgroundPlane && this.backgroundTexture) {
         this.push();
         mat4.scale(this.modelMatrix, this.modelMatrix, [10.5, 10.5, 1]);
         mat4.translate(this.modelMatrix, this.modelMatrix, [0, 0, -.6]);

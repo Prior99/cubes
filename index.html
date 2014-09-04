@@ -41,11 +41,13 @@
                 position: absolute;
                 left: 0;
                 top: 0;
-                margin-left: 50px;
+                padding-left: 50px;
                 z-index: 100;
                 overflow: hidden;
                 text-align: left;
+                background: rgba(0, 0, 0, .3);
                 width: 500px;
+                height: 100%;
             }
 
             div.button {
@@ -53,7 +55,7 @@
                 width: 200px;
                 height: 30px;
                 color: white;
-                margin-top: 30px;
+                margin-top: 10px;
                 font-size: 15pt;
                 transition: color .2s linear;
             }
@@ -159,6 +161,37 @@
                 var menu = new Menu(cubes);
                 resize();
                 graphics.start();
+                var animationInterval = setInterval(function() {
+                    window.requestAnimationFrame(function() {
+                        var remove = [];
+                        for(var c in cubes) {
+                            var cube = cubes[c];
+                            cube.tick();
+                            if(cube.distance < 0) remove.push(cube);
+                        }
+                        for(var c in remove) {
+                            cubes.splice(cubes.indexOf(remove[c]), 1);
+                        }
+                        if(Math.random() < .1) {
+                            getCube("fake.js", function(cube) {
+                                cube.distance = 16;
+                                cube.rotation = Math.PI * 3/4 + Math.random()*Math.PI/2;
+                                cube.speed = Math.random()*0.1 + 0.01;
+                                cubes.push(cube);
+                                if(Math.random() < .1) {
+                                    cube.setTexture("energy.png");
+                                }
+            					graphics.setPosition(8, 0, -5);
+                            });
+                        }
+                    });
+                }, 1000/60);
+                cubes.push();
+                function stopAnimation() {
+                    graphics.displayRing();
+                    cubes.length = 0;
+                    clearInterval(animationInterval);
+                }
 				menu.addEntry({
 					name : "Game",
                     description : "Start a new game with your current selection of cubes.",
@@ -166,9 +199,9 @@
 						menu.destroy();
 						var game = new Game(cubes, hud);
                         game.setHP(10);
-						graphics.start();
 						graphics.setPosition(0, 0, -25);
 						game.start();
+                        stopAnimation();
 					}
 				});
 				menu.addEntry({
@@ -177,9 +210,10 @@
 					method : function() {
 						menu.destroy();
 						var shop = new Shop(cubes);
-						graphics.start();
+                        graphics.displayRing();
 						graphics.setPosition(5, 0, -12);
 						shop.start();
+                        stopAnimation();
 					}
 				});
                 menu.start();

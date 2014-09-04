@@ -173,10 +173,10 @@ Shop.prototype.select = function() {
 Shop.prototype.tick = function() {
 	if(this.blocked) return;
 	if(!this.rotating) {
-		if(this.pressed.left ) {
+		if(this.pressed.right ) {
 			this.selectNext();
 		}
-		if(this.pressed.right) {
+		if(this.pressed.left) {
 			this.selectPrevious();
 		}
 	}
