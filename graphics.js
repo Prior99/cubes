@@ -213,8 +213,10 @@ Graphics.prototype.drawCubes = function() {
         if(cube && cube.model) {
             this.push();
             mat4.rotateZ(this.modelMatrix, this.modelMatrix, cube.rotation);
+            var offset = (1 - cube.scale) / 2;
             mat4.translate(this.modelMatrix, this.modelMatrix, [cube.distance, 0, 0]);
             mat4.scale(this.modelMatrix, this.modelMatrix, [cube.scale, cube.scale, cube.scale]);
+            mat4.translate(this.modelMatrix, this.modelMatrix, [offset, offset, offset]);
             if(cube.initHealth !== undefined) {
                 this.gl.uniform1f(this.shader.damageUniform, cube.getHealthRel());
                 this.drawModel(cube.model, cube.boundTexture, cube.alpha, this.brokenTexture);

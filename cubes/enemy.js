@@ -8,10 +8,15 @@ function(callback) {
     });
 	cube.setTexture("enemy.png");
     cube.addTickHandler(function(game) {
-        if(cube.distance < 6 && cube.distance > 5.8 && !cube.killed) {
+        var threshold = 0.16;
+        if(cube.distance < 5.75 && cube.distance > 5.6 && !cube.killed) {
 			for(var c in game.cubes) {
 				var other = game.cubes[c];
-				if(other.friend && Math.abs(other.rotation - cube.rotation) < 0.22) {
+                console.log((other.rotation) + " - " + (cube.rotation) + " = " + Math.abs(other.rotation - cube.rotation));
+				if(other.friend && (
+                    Math.abs(other.rotation - cube.rotation) < threshold ||
+                    Math.abs(other.rotation - cube.rotation - Math.PI * 2) < threshold
+                )) {
 					cube.kill();
                     other.damage(1);
 				}
