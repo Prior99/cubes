@@ -1,11 +1,7 @@
 function(callback) {
-    getCube("friend.js", function(cube) {
-        cube.health = 10;
+    getCube("heal.js", function(cube) {
+        cube.setHealth(20);
 		cube.setTexture("heal_20.png");
-        cube.damage = function() {
-            cube.health--;
-            if(cube.health <= 0) cube.kill();
-        }
         callback(cube);
     });
 }

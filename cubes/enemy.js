@@ -18,7 +18,7 @@ function(callback) {
                 )) {
 					cube.kill();
                     game.giveRed();
-                    other.damage(1);
+                    other.damage(game);
 				}
 			}
 		}
