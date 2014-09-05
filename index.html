@@ -11,6 +11,9 @@
         <script type="text/javascript" src="initgl.js"></script>
         <script type="text/javascript" src="menu.js"></script>
         <script type="text/javascript" src="jquery-2.1.1.min.js"></script>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="style.css" />
     </head>
     <body>
@@ -170,23 +173,20 @@
             }
             initGL(canvas, initGraphics);
             /*
-             * Hide addressbar Android/iPhone
-             * https://gist.github.com/mhammonds/1190492#file-hidemobileaddressbar-js
+             * http://stackoverflow.com/questions/4068559/removing-address-bar-from-browser-to-view-on-android
              */
-            function hideAddressBar() {
-                if(!window.location.hash) {
-                    if(document.height < window.outerHeight) {
-                        document.body.style.height = (window.outerHeight + 50) + 'px';
+            $(document).ready(function() {
+                if(navigator.userAgent.match(/Android/i)) {
+                    window.scrollTo(0,0); // reset in case prev not scrolled
+                    var nPageH = $(document).height();
+                    var nViewH = window.outerHeight;
+                    if (nViewH > nPageH) {
+                        nViewH -= 250;
+                        $('BODY').css('height',nViewH + 'px');
                     }
-                    setTimeout( function(){ window.scrollTo(0, 1); }, 50 );
-                }
-            }
-            window.addEventListener("load", function(){
-                if(!window.pageYOffset){
-                    hideAddressBar();
+                    window.scrollTo(0,1);
                 }
             });
-            window.addEventListener("orientationchange", hideAddressBar);
         </script>
     </body>
 </html>
