@@ -32,6 +32,10 @@ Shop.prototype.redrawHUD = function() {
 	ctx.fillText("Press ESC to return", this.underlay.width - 16, this.underlay.height - 20);
 };
 
+Shop.prototype.terminate = function() {
+	clearInterval(this.interval);
+};
+
 Shop.prototype.setupOfferings = function() {
 	var self = this;
 	var overlay = $("#wrapper");
@@ -115,7 +119,7 @@ Shop.prototype.setupUI = function() {
 			})(i);
 		}
 	}
-	setInterval(function() {
+	this.interval = setInterval(function() {
 		window.requestAnimationFrame(function() {
 			self.tick();
 		});

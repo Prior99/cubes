@@ -159,6 +159,7 @@
 						graphics.setPosition(5, 0, -12);
 						shop.start();
                         var onEsc = function() {
+                            shop.terminate();
                             input.removeEscListener(onEsc);
                             initMenu();
                         };
