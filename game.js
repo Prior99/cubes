@@ -137,6 +137,11 @@ Game.prototype.redrawHUD = function() {
 	ctx.arc(this.underlay.width/2, this.underlay.height/2, size, 0, Math.PI*2*(this.hp/this.initialHP));
 	ctx.lineWidth -= 2;
 	ctx.stroke();
+	//Esc
+	ctx.textAlign = "right";
+	ctx.fillStyle = "#ddd";
+	ctx.font = "16px Verdana";
+	ctx.fillText("Use the arrow keys", this.underlay.width - 16, this.underlay.height - 20);
 };
 
 Game.prototype.remove = function(cube) {
