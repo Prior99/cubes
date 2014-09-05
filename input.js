@@ -40,8 +40,8 @@ var Input = function() {
 		e.stopPropagation();
 		e.preventDefault();
 	}
-	//document.addEventListener("touchstart", down);
-	//document.addEventListener("touchend", up);
+	document.addEventListener("touchstart", down);
+	document.addEventListener("touchend", up);
 	document.addEventListener("mousedown", down);
 	document.addEventListener("mouseup", up);
 	document.addEventListener("keydown", function(e) {
