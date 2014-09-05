@@ -76,7 +76,6 @@ Graphics.prototype.loadModel = function(url, callback) {
             $.ajax({
                 url : "models/" + url,
                 dataType : "text",
-                cache : false,
                 success : function(data) {
                     var model = eval("(" + data + ")");
                     self.models[url] = model = self.bindModel(model);
