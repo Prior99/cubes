@@ -44,7 +44,7 @@
             var cubeTypesLoading = {};
             function requestFS() {
                 displayFullscreen();
-                document.onclick = function() {
+                function down(){
                     document.body.requestFullscreen =
                         document.body.requestFullscreen ||
                         document.body.webkitRequestFullscreen ||
@@ -52,7 +52,9 @@
                     document.body.requestFullscreen();
                     document.onclick = undefined;
                     initMenu();
-                };
+                    input.removeDownListener(this);
+                }
+                input.addDownListener(down);
             }
 
             function displayFullscreen() {

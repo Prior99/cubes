@@ -26,11 +26,11 @@ var Input = function() {
 		if(e.clientX < window.innerWidth / 2) self.touch.left = true;
 		if(e.clientX > window.innerWidth / 2) self.touch.right = true;
 		self.refresh();
-		e.stopPropagation();
-		e.preventDefault();
 		for(var l in self.downs) {
 			self.downs[l]();
 		}
+		e.stopPropagation();
+		e.preventDefault();
 	}
 
 	function up(e) {
@@ -91,6 +91,6 @@ Input.prototype.removeEscListener = function(f) {
 	this.esc.splice(this.esc.indexOf(f), 1);
 };
 
-Input.prototype.removeDown = function(f) {
+Input.prototype.removeDownListener = function(f) {
 	this.downs.splice(this.downs.indexOf(f), 1);
 };
