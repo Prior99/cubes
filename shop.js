@@ -8,55 +8,53 @@ var Shop = function(cubes, underlay) {
 	this.storage.restore();
 	this.offerings = [
 	{
-		type : "05.js",
-		energy : 0,
-		cubes : 10,
-		name : "x5"
+		type        : "05.js",
+		blue      : 2,
+		red       : 50,
+		name        : "x5",
+		description : "The first crappy cube you will be able to buy, capable of blocking the small amount of 5 enemys."
 	}, {
-		type : "10.js",
-		energy : 0,
-		cubes : 10,
-		name : "x10"
+		type        : "10.js",
+		blue      : 5,
+		red       : 150,
+		name        : "x10",
+		description : "This cube is twice as efficient as the x5 cube but also costs nearly 3 times as much."
 	}, {
-		type : "20.js",
-		energy : 0,
-		cubes : 10,
-		name : "x20"
+		type        : "20.js",
+		blue      : 7,
+		red       : 300,
+		name        : "x20",
+		description : "If the x5 and x10 cube are giving you a hard time already, you might want to give this one a try."
 	}, {
-		type : "50.js",
-		energy : 0,
-		cubes : 10,
-		name : "x50"
+		type        : "50.js",
+		blue      : 10,
+		red       : 500,
+		name        : "x50",
+		description : "This cube is not only 2.5 times as resistant as the x20 cube but also costs less than twice as much. The best deal we have in store."
 	}, {
-		type : "75.js",
-		energy : 0,
-		cubes : 10,
-		name : "x75"
+		type        : "75.js",
+		blue      :  15,
+		red       : 1000,
+		name        : "x75",
+		description : "If you liked the x50 you will love th x75. Okay - it might cost twice as much but is also capable of defending 25 additional enemys."
 	}, {
-		type : "100.js",
-		energy : 0,
-		cubes : 10,
-		name : "x100"
+		type        : "100.js",
+		blue      : 25,
+		red       : 2000,
+		name        : "x100",
+		description : "This is the stores number one elite cube. This one will protect you from 100 enemys which is the highest physical possible amount."
 	}, {
-		type : "heal.js",
-		energy : 0,
-		cubes : 10,
-		name : "Heal x5"
+		type        : "heal.js",
+		blue      : 75,
+		red       : 1000,
+		name        : "Heal x5",
+		description : "Even though this cube will already be gone after being hit by 5 enemys you should give it a shot. It will absorb the energy of each enemy and heal you by one HP each time."
 	}, {
-		type : "heal_20.js",
-		energy : 0,
-		cubes : 10,
-		name : "Heal x20"
-	}, {
-		type : "multiply.js",
-		energy : 0,
-		cubes : 10,
-		name : "Multiply"
-	}, {
-		type : "infinite.js",
-		energy : 0,
-		cubes : 10,
-		name : "Infinite"
+		type        : "heal_20.js",
+		blue      : 500,
+		red       : 5000,
+		name        : "Heal x20",
+		description : "This is fairly the same as the cheaper healing cube but lasts 4 times as long as it. Just image in it, this means 20 more HP for you!"
 	}];
 };
 
@@ -85,25 +83,27 @@ Shop.prototype.setupOfferings = function() {
 	for(var o in this.offerings) {
 		(function() {
 			var offering = self.offerings[o];
-			overlay.append($("<div class='button'></div>")
-				.append("<div class='name'>" + offering.name + "</div>")
-				.append("<div class='description'>"+offering.description+"</div>")
-				.click(function() {
-					if(self.rotating) return;
-					self.block();
-					getCube(offering.type, function(cube) {
-						cube.distance = 5;
-						cube.rotation = Math.PI;
-						self.cubes[self.selected] = cube;
-						self.storage.cubes[self.selected] = {
-							type : offering.type,
-						};
-						self.storage.store();
-						self.select();
-						self.unblock();
-					});
-				})
-			);
+			var entry = $($("#template_shop").html());
+			entry.find("span[class='red']").html(offering.red);
+			entry.find("span[class='blue']").html(offering.blue);
+			entry.find("div[class='text']").html(offering.description);
+			entry.find("div[class='name']").html(offering.name);
+			overlay.append(entry);
+			entry.click(function() {
+				if(self.rotating) return;
+				self.block();
+				getCube(offering.type, function(cube) {
+					cube.distance = 5;
+					cube.rotation = Math.PI;
+					self.cubes[self.selected] = cube;
+					self.storage.cubes[self.selected] = {
+						type : offering.type,
+					};
+					self.storage.store();
+					self.select();
+					self.unblock();
+				});
+			});
 		})(o);
 	}
 };
