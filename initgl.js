@@ -3,13 +3,13 @@ function initGL(canvas, callback) {
 	try {
 		var gl = canvas.getContext("experimental-webgl");
 		if(gl) {
-			callback(gl);
+			callback(false, gl);
 		}
 		else {
-			console.error("Could not initialize WebGL");
+			callback("Could not initialize WebGL");
 		}
 	}
 	catch(e) {
-		console.error("Could not initialize WebGL:", e);
+		callback("Could not initialize WebGL:" + e);
 	}
 }

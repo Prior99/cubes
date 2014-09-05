@@ -34,6 +34,7 @@ div#wrapper {
 	background: rgba(0, 0, 0, .3);
 	width: 500px;
 	height: 100%;
+	visibility: hidden;
 }
 
 div.button {

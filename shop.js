@@ -29,7 +29,7 @@ Shop.prototype.redrawHUD = function() {
 	ctx.textAlign = "right";
 	ctx.fillStyle = "#ddd";
 	ctx.font = "16px Verdana";
-	ctx.fillText("Press ESC to return", this.underlay.width - 16, this.underlay.height - 20);
+	ctx.fillText("Press ENTER to return", this.underlay.width - 16, this.underlay.height - 20);
 };
 
 Shop.prototype.terminate = function() {

@@ -13,7 +13,7 @@
         <script type="text/javascript" src="jquery-2.1.1.min.js"></script>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="mobile-web-app-capable" content="yes">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
         <link rel="stylesheet" type="text/css" href="style.css" />
     </head>
     <body>
@@ -41,6 +41,48 @@
             input = new Input();
             var cubeTypes = {};
             var cubeTypesLoading = {};
+            function requestFS() {
+                displayFullscreen();
+                document.onclick = function() {
+                    document.body.requestFullscreen =
+                        document.body.requestFullscreen ||
+                        document.body.webkitRequestFullscreen ||
+                        document.body.mozRequestFullscreen;
+                    document.body.requestFullscreen();
+                    document.onclick = undefined;
+                    initMenu();
+                };
+            }
+
+            function displayFullscreen() {
+                resize();
+                var ctx = hud.getContext("2d");
+                ctx.clearRect(0, 0, hud.width, hud.height);
+                var size = 120;
+                var text = "Click/Touch to Start";
+                ctx.font = size+"px Verdana";
+                ctx.strokeStyle = "black";
+                ctx.fillStyle = "#ffcb2d";
+                ctx.lineWidth = 1;
+                ctx.textAlign = "center";
+                ctx.fillText(text, hud.width/2, hud.height/2 + size * 2/5);
+                ctx.strokeText(text, hud.width/2, hud.height/2 + size * 2/5);
+            }
+
+            function displayWebGLError() {
+                resize();
+                var ctx = hud.getContext("2d");
+                ctx.clearRect(0, 0, hud.width, hud.height);
+                var size = 120;
+                var text = "WebGL not supported!";
+                ctx.font = size+"px Verdana";
+                ctx.strokeStyle = "black";
+                ctx.fillStyle = "#ff5555";
+                ctx.lineWidth = 1;
+                ctx.textAlign = "center";
+                ctx.fillText(text, hud.width/2, hud.height/2 + size * 2/5);
+                ctx.strokeText(text, hud.width/2, hud.height/2 + size * 2/5);
+            }
 
             function getCube(name, callback) {
                 if(cubeTypes[name] !== undefined) {
@@ -69,7 +111,8 @@
                 }
             }
             function resize() {
-                graphics.resize(canvas.width = window.innerWidth, canvas.height = window.innerHeight);
+                if(graphics )graphics.resize(window.innerWidth, window.innerHeight);
+                canvas.width = window.innerWidth, canvas.height = window.innerHeight
                 hud.width = window.innerWidth, hud.height = window.innerHeight
             }
 
@@ -77,11 +120,17 @@
                 resize();
             }, false);
 
-            function initGraphics(gl) {
-                graphics = new Graphics(canvas.width, canvas.height, cubes, gl, function() {
-                    graphics.start();
-                    initMenu();
-                });
+            function initGraphics(err, gl) {
+                if(!err) {
+                    graphics = new Graphics(canvas.width, canvas.height, cubes, gl, function() {
+                        graphics.start();
+                        startAnimation();
+                        requestFS();
+                    });
+                }
+                else {
+                    displayWebGLError();
+                }
             }
 
             function initShop() {
@@ -92,14 +141,14 @@
                 shop.start();
             }
 
-            function initMenu() {
-                $("#wrapper").css({"visibility" : "visible"}).html("");
+            var stopped, animationInterval;
+
+            function startAnimation() {
                 cubes.length = 0;
-                var stopped = false;
-                var menu = new Menu(cubes);
+                stopped = false;
                 resize();
                 graphics.hideRing();
-                var animationInterval = setInterval(function() {
+                animationInterval = setInterval(function() {
                     window.requestAnimationFrame(function() {
                         if(stopped) return;
                         var remove = [];
@@ -120,18 +169,23 @@
                                 if(Math.random() < .1) {
                                     cube.setTexture("energy.png");
                                 }
-            					graphics.setPosition(8, 0, -5);
+                                graphics.setPosition(8, 0, -5);
                             });
                         }
                     });
                 }, 1000/60);
-                cubes.push();
-                function stopAnimation() {
-                    stopped = true;
-                    graphics.displayRing();
-                    cubes.length = 0;
-                    clearInterval(animationInterval);
-                }
+            }
+
+            function stopAnimation() {
+                stopped = true;
+                graphics.displayRing();
+                cubes.length = 0;
+                clearInterval(animationInterval);
+            }
+
+            function initMenu() {
+                $("#wrapper").css({"visibility" : "visible"}).html("");
+                var menu = new Menu(cubes);
 				menu.addEntry({
 					name : "Game",
                     description : "Start a new game with your current selection of cubes.",
@@ -142,12 +196,13 @@
 						var game = new Game(cubes, hud, input);
                         game.setHP(10);
 						graphics.setPosition(0, 0, -25);
-						game.start();
                         var onEsc = function() {
                             game.gameover();
                             input.removeEscListener(onEsc);
+                            startAnimation();
                             initMenu();
                         };
+						game.start();
                         input.addEscListener(onEsc);
 					}
 				});
@@ -160,33 +215,19 @@
 						var shop = new Shop(cubes, hud, input);
                         graphics.displayRing();
 						graphics.setPosition(5, 0, -12);
-						shop.start();
                         var onEsc = function() {
                             shop.terminate();
                             input.removeEscListener(onEsc);
+                            startAnimation();
                             initMenu();
                         };
+						shop.start();
                         input.addEscListener(onEsc);
 					}
 				});
                 menu.start();
             }
             initGL(canvas, initGraphics);
-            /*
-             * http://stackoverflow.com/questions/4068559/removing-address-bar-from-browser-to-view-on-android
-             */
-            $(document).ready(function() {
-                if(navigator.userAgent.match(/Android/i)) {
-                    window.scrollTo(0,0); // reset in case prev not scrolled
-                    var nPageH = $(document).height();
-                    var nViewH = window.outerHeight;
-                    if (nViewH > nPageH) {
-                        nViewH -= 250;
-                        $('BODY').css('height',nViewH + 'px');
-                    }
-                    window.scrollTo(0,1);
-                }
-            });
         </script>
     </body>
 </html>
