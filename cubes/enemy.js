@@ -14,7 +14,8 @@ function(callback) {
 				var other = game.cubes[c];
 				if(other.friend && (
                     Math.abs(other.rotation - cube.rotation) < threshold ||
-                    Math.abs(other.rotation - cube.rotation - Math.PI * 2) < threshold
+                    Math.abs(other.rotation - cube.rotation - Math.PI * 2) < threshold ||
+                    Math.abs(other.rotation - cube.rotation + Math.PI * 2) < threshold
                 )) {
 					cube.kill();
                     game.giveRed();

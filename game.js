@@ -85,7 +85,7 @@ Game.prototype.getCubesPerSecond = function() {
 };
 
 Game.prototype.tick = function() {
-	this.speed += 0.00001;
+	this.speed += 0.000003;
 	var remove = [];
 	for(var c in this.cubes) {
 		var cube = this.cubes[c];
