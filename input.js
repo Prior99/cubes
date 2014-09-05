@@ -22,16 +22,28 @@ var Input = function() {
 	};
 	this.esc = [];
 	this.down = [];
-	document.addEventListener("touchstart", function(e) {
+	function down(e) {
 		if(e.clientX < window.innerWidth / 2) self.touch.left = true;
 		if(e.clientX > window.innerWidth / 2) self.touch.right = true;
 		self.refresh();
-	});
-	document.addEventListener("touchend", function(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		for(var l in self.down) {
+			self.down[l]();
+		}
+	}
+
+	function up(e) {
 		if(e.clientX < window.innerWidth / 2) self.touch.left = false;
 		if(e.clientX > window.innerWidth / 2) self.touch.right = false;
 		self.refresh();
-	});
+		e.stopPropagation();
+		e.preventDefault();
+	}
+	document.addEventListener("touchstart", down);
+	document.addEventListener("touchend", up);
+	document.addEventListener("mousedown", down);
+	document.addEventListener("mouseup", up);
 	document.addEventListener("keydown", function(e) {
 		if(e.which == CODE_UP) self.keyboard.up = true;
 		if(e.which == CODE_DOWN) self.keyboard.down = true;
@@ -46,14 +58,18 @@ var Input = function() {
 		if(e.which == CODE_RIGHT) self.keyboard.right = false;
 		self.refresh();
 		if(e.which == CODE_ESC) {
-			for(var l in self.esc) {
-				self.esc[l]();
-			}
+			self.escape();
 		}
-			for(var l in self.down) {
-				self.down[l]();
-			}
+		for(var l in self.down) {
+			self.down[l]();
+		}
 	});
+};
+
+Input.prototype.escape = function() {
+	for(var l in this.esc) {
+		this.esc[l]();
+	}
 };
 
 Input.prototype.refresh = function() {
@@ -61,7 +77,7 @@ Input.prototype.refresh = function() {
 	this.down = this.keyboard.down;
 	this.left = this.keyboard.left || this.touch.left;
 	this.right = this.keyboard.right || this.touch.right;
-}
+};
 
 Input.prototype.addEscListener = function(f) {
 	this.esc.push(f);

@@ -3,7 +3,7 @@ var Shop = function(cubes, underlay, input) {
 	this.underlay = underlay;
 	this.underlay.className = "underlay";
 	this.ctx = this.underlay.getContext("2d");
-	this.pressed = input;
+	this.input = input;
 	this.storage = new Storage();
 	this.storage.restore();
 };
@@ -25,11 +25,6 @@ Shop.prototype.redrawHUD = function() {
 	ctx.textAlign = "left";
 	ctx.fillText(this.storage.blue, this.underlay.width/2 + 10, this.underlay.height - size/4);
 	ctx.strokeText(this.storage.blue, this.underlay.width/2 + 10, this.underlay.height - size/4);
-	//Esc
-	ctx.textAlign = "right";
-	ctx.fillStyle = "#ddd";
-	ctx.font = "16px Verdana";
-	ctx.fillText("Press ENTER to return", this.underlay.width - 16, this.underlay.height - 20);
 };
 
 Shop.prototype.terminate = function() {
@@ -69,6 +64,13 @@ Shop.prototype.setupOfferings = function() {
 			});
 		})(o);
 	}
+	overlay.append($("<div class='button' style='margin-top: 20px;'></div>")
+		.append("<div class='name'>Back</div>")
+		.append("<div class='description'>Back to the main menu.</div>")
+		.click(function() {
+			self.input.escape();
+		})
+	);
 };
 
 Shop.prototype.block = function() {
@@ -177,10 +179,10 @@ Shop.prototype.select = function() {
 Shop.prototype.tick = function() {
 	if(this.blocked) return;
 	if(!this.rotating) {
-		if(this.pressed.right ) {
+		if(this.input.right ) {
 			this.selectNext();
 		}
-		if(this.pressed.left) {
+		if(this.input.left) {
 			this.selectPrevious();
 		}
 	}
