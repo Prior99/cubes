@@ -31,11 +31,11 @@
         <canvas width="800" height="600" id="canvas"></canvas>
         <canvas width="800" height="600" id="hud"></canvas>
         <script type="text/javascript">
-            var graphics, canvas, cubes, hud;
+            var graphics, canvas, cubes, hud, input;
             canvas = $("#canvas")[0];
             hud = $("#hud")[0];
             cubes = [];
-
+            input = new Input();
             var cubeTypes = {};
             var cubeTypesLoading = {};
 
@@ -65,7 +65,6 @@
                     }
                 }
             }
-
             function resize() {
                 graphics.resize(canvas.width = window.innerWidth, canvas.height = window.innerHeight);
                 hud.width = window.innerWidth, hud.height = window.innerHeight
@@ -76,7 +75,10 @@
             }, false);
 
             function initGraphics(gl) {
-                graphics = new Graphics(canvas.width, canvas.height, cubes, gl, initMenu);
+                graphics = new Graphics(canvas.width, canvas.height, cubes, gl, function() {
+                    graphics.start();
+                    initMenu();
+                });
             }
 
             function initShop() {
@@ -88,11 +90,15 @@
             }
 
             function initMenu() {
+                $("#wrapper").css({"visibility" : "visible"}).html("");
+                cubes.length = 0;
+                var stopped = false;
                 var menu = new Menu(cubes);
                 resize();
-                graphics.start();
+                graphics.hideRing();
                 var animationInterval = setInterval(function() {
                     window.requestAnimationFrame(function() {
+                        if(stopped) return;
                         var remove = [];
                         for(var c in cubes) {
                             var cube = cubes[c];
@@ -118,6 +124,7 @@
                 }, 1000/60);
                 cubes.push();
                 function stopAnimation() {
+                    stopped = true;
                     graphics.displayRing();
                     cubes.length = 0;
                     clearInterval(animationInterval);
@@ -129,10 +136,16 @@
                         stopAnimation();
                         $("#wrapper").css({"visibility" : "hidden"});
 						menu.destroy();
-						var game = new Game(cubes, hud);
+						var game = new Game(cubes, hud, input);
                         game.setHP(10);
 						graphics.setPosition(0, 0, -25);
 						game.start();
+                        var onEsc = function() {
+                            game.gameover();
+                            input.removeEscListener(onEsc);
+                            initMenu();
+                        };
+                        input.addEscListener(onEsc);
 					}
 				});
 				menu.addEntry({
@@ -141,10 +154,15 @@
 					method : function() {
                         stopAnimation();
 						menu.destroy();
-						var shop = new Shop(cubes, hud);
+						var shop = new Shop(cubes, hud, input);
                         graphics.displayRing();
 						graphics.setPosition(5, 0, -12);
 						shop.start();
+                        var onEsc = function() {
+                            input.removeEscListener(onEsc);
+                            initMenu();
+                        };
+                        input.addEscListener(onEsc);
 					}
 				});
                 menu.start();

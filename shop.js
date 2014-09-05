@@ -1,61 +1,11 @@
-var Shop = function(cubes, underlay) {
+var Shop = function(cubes, underlay, input) {
 	this.cubes = cubes;
 	this.underlay = underlay;
 	this.underlay.className = "underlay";
 	this.ctx = this.underlay.getContext("2d");
-	this.pressed = new Input();
+	this.pressed = input;
 	this.storage = new Storage();
 	this.storage.restore();
-	this.offerings = [
-	{
-		type        : "05.js",
-		blue      : 2,
-		red       : 50,
-		name        : "x5",
-		description : "The first crappy cube you will be able to buy, capable of blocking the small amount of 5 enemys."
-	}, {
-		type        : "10.js",
-		blue      : 5,
-		red       : 150,
-		name        : "x10",
-		description : "This cube is twice as efficient as the x5 cube but also costs nearly 3 times as much."
-	}, {
-		type        : "20.js",
-		blue      : 7,
-		red       : 300,
-		name        : "x20",
-		description : "If the x5 and x10 cube are giving you a hard time already, you might want to give this one a try."
-	}, {
-		type        : "50.js",
-		blue      : 10,
-		red       : 500,
-		name        : "x50",
-		description : "This cube is not only 2.5 times as resistant as the x20 cube but also costs less than twice as much. The best deal we have in store."
-	}, {
-		type        : "75.js",
-		blue      :  15,
-		red       : 1000,
-		name        : "x75",
-		description : "If you liked the x50 you will love th x75. Okay - it might cost twice as much but is also capable of defending 25 additional enemys."
-	}, {
-		type        : "100.js",
-		blue      : 25,
-		red       : 2000,
-		name        : "x100",
-		description : "This is the stores number one elite cube. This one will protect you from 100 enemys which is the highest physical possible amount."
-	}, {
-		type        : "heal.js",
-		blue      : 75,
-		red       : 1000,
-		name        : "Heal x5",
-		description : "Even though this cube will already be gone after being hit by 5 enemys you should give it a shot. It will absorb the energy of each enemy and heal you by one HP each time."
-	}, {
-		type        : "heal_20.js",
-		blue      : 500,
-		red       : 5000,
-		name        : "Heal x20",
-		description : "This is fairly the same as the cheaper healing cube but lasts 4 times as long as it. Just image in it, this means 20 more HP for you!"
-	}];
 };
 
 Shop.prototype.redrawHUD = function() {
@@ -75,6 +25,11 @@ Shop.prototype.redrawHUD = function() {
 	ctx.textAlign = "left";
 	ctx.fillText(this.storage.blue, this.underlay.width/2 + 10, this.underlay.height - size/4);
 	ctx.strokeText(this.storage.blue, this.underlay.width/2 + 10, this.underlay.height - size/4);
+	//Esc
+	ctx.textAlign = "right";
+	ctx.fillStyle = "#ddd";
+	ctx.font = "16px Verdana";
+	ctx.fillText("Press ESC to return", this.underlay.width - 16, this.underlay.height - 20);
 };
 
 Shop.prototype.setupOfferings = function() {
@@ -121,9 +76,21 @@ Shop.prototype.unblock = function() {
 };
 
 Shop.prototype.start = function() {
-	this.setupOfferings();
-	this.selected = parseInt(this.storage.cubes.length/2);
 	var self = this;
+	$.ajax({
+		url : "offerings.json",
+		dataType : "text",
+		success : function(html) {
+			self.offerings = JSON.parse(html);
+			self.setupOfferings();
+			self.setupUI();
+		}
+	});
+};
+
+Shop.prototype.setupUI = function() {
+	var self = this;
+	this.selected = parseInt(this.storage.cubes.length/2);
 	for(var i = 0; i < this.storage.cubes.length; i++) {
 		var type = this.storage.cubes[i];
 		if(type == undefined) {
@@ -148,7 +115,6 @@ Shop.prototype.start = function() {
 			})(i);
 		}
 	}
-	var self = this;
 	setInterval(function() {
 		window.requestAnimationFrame(function() {
 			self.tick();
@@ -164,7 +130,7 @@ Shop.prototype.addCube = function(c, i) {
 	c.distance = 5;
 	c.rotation = (Math.PI*2/this.storage.cubes.length)*i;
 	this.cubes[i] = c;
-}
+};
 
 Shop.prototype.selectNext = function() {
 	this.rotateRight();
@@ -173,7 +139,7 @@ Shop.prototype.selectNext = function() {
 		this.selected -= this.storage.cubes.length;
 	}
 	this.select();
-}
+};
 
 Shop.prototype.selectPrevious = function() {
 	this.rotateLeft();
@@ -182,7 +148,7 @@ Shop.prototype.selectPrevious = function() {
 		this.selected += this.storage.cubes.length;
 	}
 	this.select();
-}
+};
 
 Shop.prototype.unselect = function() {
 	if(this.cubeUnselect && this.cubeUnselect.cube) {
@@ -192,7 +158,7 @@ Shop.prototype.unselect = function() {
 		cube : this.cubes[this.selected],
 		ticks : 10
 	};
-}
+};
 
 Shop.prototype.select = function() {
 	if(this.cubeSelect && this.cubeSelect.cube) {
@@ -202,7 +168,7 @@ Shop.prototype.select = function() {
 		cube : this.cubes[this.selected],
 		ticks : 10
 	};
-}
+};
 
 Shop.prototype.tick = function() {
 	if(this.blocked) return;
@@ -236,14 +202,14 @@ Shop.prototype.tick = function() {
 		if(this.cubeUnselect.cube) this.cubeUnselect.cube.move(-0.3);
 		if(--this.cubeUnselect.ticks <= 0) this.cubeUnselect = undefined;
 	}
-}
+};
 
 Shop.prototype.rotateLeft = function() {
 	this.dir = 1;
 	this.rotating = 20;
-}
+};
 
 Shop.prototype.rotateRight = function() {
 	this.dir = -1;
 	this.rotating = 20;
-}
+};

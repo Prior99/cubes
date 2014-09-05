@@ -1,11 +1,11 @@
 var START_C = 120;
 
-var Game = function(cubes, underlay) {
+var Game = function(cubes, underlay, input) {
 	var self = this;
 	this.underlay = underlay;
 	this.underlay.className = "underlay";
 	this.ctx = this.underlay.getContext("2d");
-	this.pressed = new Input();
+	this.pressed = input;
 	this.speed = 0.1;
 	this.cubes = cubes;
 	this.storage = new Storage();
@@ -38,6 +38,11 @@ Game.prototype.gameover = function() {
 	ctx.strokeText(text, this.underlay.width/2, this.underlay.height/2 + size * 2/5);
 	clearInterval(this.interval);
 	this.storage.store();
+	//Esc
+	ctx.textAlign = "right";
+	ctx.fillStyle = "#ddd";
+	ctx.font = "16px Verdana";
+	ctx.fillText("Press ESC to return", this.underlay.width - 16, this.underlay.height - 20);
 
 };
 

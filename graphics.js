@@ -41,6 +41,10 @@ Graphics.prototype.displayRing = function() {
     this.ring = true;
 };
 
+Graphics.prototype.hideRing = function() {
+    this.ring = false;
+};
+
 Graphics.prototype.pop = function() {
     if(this.modelMatrixStack.length == 0) {
         throw "Could not pop on empty stack!";
