@@ -29,16 +29,12 @@ var Input = function() {
 		for(var l in self.downs) {
 			self.downs[l]();
 		}
-		e.stopPropagation();
-		e.preventDefault();
 	}
 
 	function up(e) {
 		if(e.clientX < window.innerWidth / 2) self.touch.left = false;
 		if(e.clientX > window.innerWidth / 2) self.touch.right = false;
 		self.refresh();
-		e.stopPropagation();
-		e.preventDefault();
 	}
 	document.addEventListener("touchstart", down);
 	document.addEventListener("touchend", up);
