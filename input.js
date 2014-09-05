@@ -4,7 +4,7 @@ var CODE_RIGHT = 39;
 var CODE_DOWN = 40;
 var CODE_ESC = 13;
 
-var Input = function() {
+var Input = function(canvas) {
 	var self = this;
 	this.up = false;
 	this.down = false;
@@ -21,20 +21,25 @@ var Input = function() {
 		right : false
 	};
 	this.esc = [];
+	this.action = [];
 	this.downs = [];
+	this.touchs = [];
 	function down(e) {
 		if(e.clientX < window.innerWidth / 2) self.touch.left = true;
 		if(e.clientX > window.innerWidth / 2) self.touch.right = true;
 		self.refresh();
-		for(var l in self.downs) {
-			self.downs[l]();
-		}
+		self.fireTouch();
+		self.fireAction();
+		e.stopPropagation();
+		e.preventDefault();
 	}
 
 	function up(e) {
 		if(e.clientX < window.innerWidth / 2) self.touch.left = false;
 		if(e.clientX > window.innerWidth / 2) self.touch.right = false;
 		self.refresh();
+		e.stopPropagation();
+		e.preventDefault();
 	}
 	document.addEventListener("touchstart", down);
 	document.addEventListener("touchend", up);
@@ -54,17 +59,34 @@ var Input = function() {
 		if(e.which == CODE_RIGHT) self.keyboard.right = false;
 		self.refresh();
 		if(e.which == CODE_ESC) {
-			self.escape();
+			self.fireEscape();
 		}
-		for(var l in self.downs) {
-			self.downs[l]();
-		}
+		self.fireAction();
+		self.fireDown();
 	});
 };
 
-Input.prototype.escape = function() {
+Input.prototype.fireEscape = function() {
 	for(var l in this.esc) {
 		this.esc[l]();
+	}
+};
+
+Input.prototype.fireAction = function() {
+	for(var l in this.action) {
+		this.action[l]();
+	}
+};
+
+Input.prototype.fireDown = function() {
+	for(var l in this.downs) {
+		this.downs[l]();
+	}
+};
+
+Input.prototype.fireTouch = function() {
+	for(var l in this.touchs) {
+		this.touchs[l]();
 	}
 };
 
@@ -83,10 +105,26 @@ Input.prototype.addDownListener = function(f) {
 	this.downs.push(f);
 };
 
+Input.prototype.addTouchListener = function(f) {
+	this.touchs.push(f);
+};
+
+Input.prototype.addActionListener = function(f) {
+	this.action.push(f);
+};
+
 Input.prototype.removeEscListener = function(f) {
 	this.esc.splice(this.esc.indexOf(f), 1);
 };
 
 Input.prototype.removeDownListener = function(f) {
 	this.downs.splice(this.downs.indexOf(f), 1);
+};
+
+Input.prototype.removeTouchListener = function(f) {
+	this.touchs.splice(this.touchs.indexOf(f), 1);
+};
+
+Input.prototype.removeActionListener = function(f) {
+	this.action.splice(this.action.indexOf(f), 1);
 };

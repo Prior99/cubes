@@ -43,7 +43,7 @@ Shop.prototype.setupOfferings = function() {
 			entry.find("div[class='text']").html(offering.description);
 			entry.find("div[class='name']").html(offering.name);
 			overlay.append(entry);
-			entry.click(function() {
+			entry.on("mouseup", function(e) {
 				if(self.storage.red < offering.red || self.storage.blue < offering.blue) return;
 				if(self.rotating) return;
 				self.storage.red -= offering.red;
@@ -68,7 +68,7 @@ Shop.prototype.setupOfferings = function() {
 		.append("<div class='name'>Back</div>")
 		.append("<div class='description'>Back to the main menu.</div>")
 		.click(function() {
-			self.input.escape();
+			self.input.fireEscape();
 		})
 	);
 };
@@ -179,10 +179,10 @@ Shop.prototype.select = function() {
 Shop.prototype.tick = function() {
 	if(this.blocked) return;
 	if(!this.rotating) {
-		if(this.input.right ) {
+		if(this.input.keyboard.right ) {
 			this.selectNext();
 		}
-		if(this.input.left) {
+		if(this.input.keyboard.left) {
 			this.selectPrevious();
 		}
 	}

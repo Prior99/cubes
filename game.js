@@ -43,9 +43,9 @@ Game.prototype.gameover = function() {
 	ctx.fillStyle = "#ddd";
 	ctx.font = "16px akashiregular";
 	ctx.fillText("Press ENTER or touch to return", this.underlay.width - 16, this.underlay.height - 20);
-	self.input.addEscListener(function() {
-		self.input.escape();
-		self.input.removeEscListener(this);
+	self.input.addTouchListener(function() {
+		self.input.fireEscape();
+		self.input.removeTouchListener(this);
 	});
 
 };
