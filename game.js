@@ -110,13 +110,13 @@ Game.prototype.redrawHUD = function() {
 	//Red
 	ctx.fillStyle = "#ff5555";
 	ctx.textAlign = "right";
-	ctx.fillText(this.storage.red, this.underlay.width/2, this.underlay.height*3/4 + size * 2/5);
-	ctx.strokeText(this.storage.red, this.underlay.width/2, this.underlay.height*3/4 + size * 2/5);
+	ctx.fillText(this.storage.red, this.underlay.width/2 - 10, this.underlay.height*3/4 + size * 2/5);
+	ctx.strokeText(this.storage.red, this.underlay.width/2 - 10, this.underlay.height*3/4 + size * 2/5);
 	//Blue
 	ctx.fillStyle = "#5555ff";
 	ctx.textAlign = "left";
-	ctx.fillText(this.storage.blue, this.underlay.width/2, this.underlay.height*3/4 + size * 2/5);
-	ctx.strokeText(this.storage.blue, this.underlay.width/2, this.underlay.height*3/4 + size * 2/5);
+	ctx.fillText(this.storage.blue, this.underlay.width/2 + 10, this.underlay.height*3/4 + size * 2/5);
+	ctx.strokeText(this.storage.blue, this.underlay.width/2 + 10, this.underlay.height*3/4 + size * 2/5);
 	//Lifes
 	ctx.fillStyle = "#ffcb2d";
 	ctx.textAlign = "center";
@@ -144,11 +144,21 @@ Game.prototype.spawnEnemy = function() {
 	var self = this;
 	if(Math.random() <.5) a = Math.random() * Math.PI / 2 - Math.PI / 4;
 	else a = Math.random() * Math.PI / 2 - Math.PI / 4 + Math.PI;
-	getCube("enemy.js", function(cube) {
-	    cube.speed = self.speed * (Math.random() / 2 + .75);
-	    cube.rotation = a;
-	    cube.distance = 20;
+	function add(cube) {
+		cube.speed = self.speed * (Math.random() / 2 + .75);
+		cube.rotation = a;
+		cube.distance = 20;
 		cube.normalizeRotation();
 		self.cubes.push(cube);
-	});
+	}
+	if(Math.random() < .1) {
+		getCube("energy.js", function(cube) {
+			add(cube);
+		});
+	}
+	else {
+		getCube("enemy.js", function(cube) {
+			add(cube);
+		});
+	}
 };

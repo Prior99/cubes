@@ -1,5 +1,8 @@
-var Shop = function(cubes) {
+var Shop = function(cubes, underlay) {
 	this.cubes = cubes;
+	this.underlay = underlay;
+	this.underlay.className = "underlay";
+	this.ctx = this.underlay.getContext("2d");
 	this.pressed = new Input();
 	this.storage = new Storage();
 	this.storage.restore();
@@ -55,7 +58,26 @@ var Shop = function(cubes) {
 		cubes : 10,
 		name : "Infinite"
 	}];
-}
+};
+
+Shop.prototype.redrawHUD = function() {
+	var ctx = this.ctx;
+	ctx.lineWidth = 1;
+	var size = Math.min(this.underlay.height, this.underlay.width)/10;
+	ctx.clearRect(0, 0, this.underlay.width, this.underlay.height);
+	ctx.font = size+"px Verdana";
+	ctx.strokeStyle = "black";
+	//Red
+	ctx.fillStyle = "#ff5555";
+	ctx.textAlign = "right";
+	ctx.fillText(this.storage.red, this.underlay.width/2 - 10, this.underlay.height - size/4);
+	ctx.strokeText(this.storage.red, this.underlay.width/2 - 10, this.underlay.height - size/4);
+	//Blue
+	ctx.fillStyle = "#5555ff";
+	ctx.textAlign = "left";
+	ctx.fillText(this.storage.blue, this.underlay.width/2 + 10, this.underlay.height - size/4);
+	ctx.strokeText(this.storage.blue, this.underlay.width/2 + 10, this.underlay.height - size/4);
+};
 
 Shop.prototype.setupOfferings = function() {
 	var self = this;
@@ -128,6 +150,10 @@ Shop.prototype.start = function() {
 			self.tick();
 		});
 	}, 1000/60);
+	window.addEventListener('resize', function() {
+		self.redrawHUD();
+	});
+	this.redrawHUD();
 }
 
 Shop.prototype.addCube = function(c, i) {
