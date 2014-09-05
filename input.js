@@ -21,15 +21,15 @@ var Input = function() {
 		right : false
 	};
 	this.esc = [];
-	this.down = [];
+	this.downs = [];
 	function down(e) {
 		if(e.clientX < window.innerWidth / 2) self.touch.left = true;
 		if(e.clientX > window.innerWidth / 2) self.touch.right = true;
 		self.refresh();
 		e.stopPropagation();
 		e.preventDefault();
-		for(var l in self.down) {
-			self.down[l]();
+		for(var l in self.downs) {
+			self.downs[l]();
 		}
 	}
 
@@ -60,8 +60,8 @@ var Input = function() {
 		if(e.which == CODE_ESC) {
 			self.escape();
 		}
-		for(var l in self.down) {
-			self.down[l]();
+		for(var l in self.downs) {
+			self.downs[l]();
 		}
 	});
 };
@@ -84,7 +84,7 @@ Input.prototype.addEscListener = function(f) {
 };
 
 Input.prototype.addDownListener = function(f) {
-	this.down.push(f);
+	this.downs.push(f);
 };
 
 Input.prototype.removeEscListener = function(f) {
@@ -92,5 +92,5 @@ Input.prototype.removeEscListener = function(f) {
 };
 
 Input.prototype.removeDown = function(f) {
-	this.down.splice(this.down.indexOf(f), 1);
+	this.downs.splice(this.downs.indexOf(f), 1);
 };

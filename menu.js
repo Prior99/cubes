@@ -26,5 +26,5 @@ Menu.prototype.start = function() {
 };
 
 Menu.prototype.destroy = function() {
-	this.div.html("");
+	this.div.html("<h1>ChunkZ</h1>");
 };

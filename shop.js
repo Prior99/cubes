@@ -13,7 +13,7 @@ Shop.prototype.redrawHUD = function() {
 	ctx.lineWidth = 1;
 	var size = Math.min(this.underlay.height, this.underlay.width)/10;
 	ctx.clearRect(0, 0, this.underlay.width, this.underlay.height);
-	ctx.font = size+"px Verdana";
+	ctx.font = size+"px akashiregular";
 	ctx.strokeStyle = "black";
 	//Red
 	ctx.fillStyle = "#ff5555";

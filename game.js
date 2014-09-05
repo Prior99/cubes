@@ -29,7 +29,7 @@ Game.prototype.gameover = function() {
 	ctx.clearRect(0, 0, this.underlay.width, this.underlay.height);
 	var size = 120;
 	var text = "Game Over";
-	ctx.font = size+"px Verdana";
+	ctx.font = size+"px akashiregular";
 	ctx.strokeStyle = "black";
 	ctx.fillStyle = "#ff5555";
 	ctx.lineWidth = 1;
@@ -41,7 +41,7 @@ Game.prototype.gameover = function() {
 	//Esc
 	ctx.textAlign = "right";
 	ctx.fillStyle = "#ddd";
-	ctx.font = "16px Verdana";
+	ctx.font = "16px akashiregular";
 	ctx.fillText("Press ENTER or touch to return", this.underlay.width - 16, this.underlay.height - 20);
 	self.input.addDownListener(function() {
 		self.input.escape();
@@ -113,7 +113,7 @@ Game.prototype.redrawHUD = function() {
 	ctx.lineWidth = 1;
 	var size = Math.min(this.underlay.height, this.underlay.width)/10;
 	ctx.clearRect(0, 0, this.underlay.width, this.underlay.height);
-	ctx.font = size+"px Verdana";
+	ctx.font = size+"px akashiregular";
 	ctx.strokeStyle = "black";
 	//Red
 	ctx.fillStyle = "#ff5555";
@@ -143,8 +143,9 @@ Game.prototype.redrawHUD = function() {
 	//Esc
 	ctx.textAlign = "right";
 	ctx.fillStyle = "#ddd";
-	ctx.font = "16px Verdana";
-	ctx.fillText("Use the arrow keys", this.underlay.width - 16, this.underlay.height - 20);
+	ctx.font = "16px akashiregular";
+	ctx.fillText("Use the arrow keys", this.underlay.width - 16, this.underlay.height - 40);
+	ctx.fillText("or touch on the edges", this.underlay.width - 16, this.underlay.height - 20);
 };
 
 Game.prototype.remove = function(cube) {

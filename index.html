@@ -15,6 +15,7 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
         <link rel="stylesheet" type="text/css" href="style.css" />
+        <link rel="stylesheet" type="text/css" href="font/stylesheet.css" />
     </head>
     <body>
         <script type="text/html" id="template_shop">
@@ -29,7 +30,7 @@
                 </div>
             </div>
         </script>
-        <div id="wrapper">
+        <div id="wrapper">asd
         </div>
         <canvas width="800" height="600" id="canvas"></canvas>
         <canvas width="800" height="600" id="hud"></canvas>
@@ -60,7 +61,7 @@
                 ctx.clearRect(0, 0, hud.width, hud.height);
                 var size = 120;
                 var text = "Click/Touch to Start";
-                ctx.font = size+"px Verdana";
+                ctx.font = size+"px akashiregular";
                 ctx.strokeStyle = "black";
                 ctx.fillStyle = "#ffcb2d";
                 ctx.lineWidth = 1;
@@ -75,7 +76,7 @@
                 ctx.clearRect(0, 0, hud.width, hud.height);
                 var size = 120;
                 var text = "WebGL not supported!";
-                ctx.font = size+"px Verdana";
+                ctx.font = size+"px akashiregular";
                 ctx.strokeStyle = "black";
                 ctx.fillStyle = "#ff5555";
                 ctx.lineWidth = 1;
@@ -184,7 +185,7 @@
             }
 
             function initMenu() {
-                $("#wrapper").css({"visibility" : "visible"}).html("");
+                $("#wrapper").css({"visibility" : "visible"}).html("<h1>ChunkZ</h1>");
                 var menu = new Menu(cubes);
 				menu.addEntry({
 					name : "Game",
@@ -227,7 +228,9 @@
 				});
                 menu.start();
             }
-            initGL(canvas, initGraphics);
+            addEventListener('load', function() {
+                initGL(canvas, initGraphics);
+            },false);
         </script>
     </body>
 </html>
