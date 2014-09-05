@@ -90,7 +90,11 @@ Shop.prototype.setupOfferings = function() {
 			entry.find("div[class='name']").html(offering.name);
 			overlay.append(entry);
 			entry.click(function() {
+				if(self.storage.red < offering.red || self.storage.blue < offering.blue) return;
 				if(self.rotating) return;
+				self.storage.red -= offering.red;
+				self.storage.blue -= offering.blue;
+				self.redrawHUD();
 				self.block();
 				getCube(offering.type, function(cube) {
 					cube.distance = 5;
