@@ -27,7 +27,7 @@ Game.prototype.gameover = function() {
 	this.underlay.className = "overlay";
 	var ctx = this.ctx;
 	ctx.clearRect(0, 0, this.underlay.width, this.underlay.height);
-	var size = 120;
+	var size = 50;
 	var text = "Game Over";
 	ctx.font = size+"px akashiregular";
 	ctx.strokeStyle = "black";
@@ -43,8 +43,9 @@ Game.prototype.gameover = function() {
 	ctx.fillStyle = "#ddd";
 	ctx.font = "16px akashiregular";
 	ctx.fillText("Press ENTER or touch to return", this.underlay.width - 16, this.underlay.height - 20);
-	self.input.addDownListener(function() {
+	self.input.addEscListener(function() {
 		self.input.escape();
+		self.input.removeEscListener(this);
 	});
 
 };
