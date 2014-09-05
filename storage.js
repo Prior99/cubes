@@ -6,7 +6,11 @@ Storage.prototype.restore = function() {
     if(localStorage.cubes === undefined) {
         this.cubes = [{
             type : "infinite.js",
-        }, null, null, null, null, null, null, null, null, null, null, null];
+        }, null, null, null, {
+            type : "20.js",
+        }, null, null, null, {
+            type : "10.js",
+        }, null, null, null];
         this.red = 0;
         this.blue = 0;
     }
