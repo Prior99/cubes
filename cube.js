@@ -1,6 +1,5 @@
 var Cube = function(obj) {
     var self = this;
-    this.modelFile = "cube.js";
     this.enabled = true;
     this.distance = 0;
     this.scale = 1;
@@ -12,19 +11,6 @@ var Cube = function(obj) {
             this[key] = obj[key];
         }
     }
-    graphics.loadModel(this.modelFile, function(model) {
-        self.model = model;
-        if(self.model && self.model.texture) {
-            graphics.loadTexture(self.model.texture, function(tex) {
-                if(!self.boundTexture) {
-                    self.boundTexture = tex;
-                }
-            });
-        }
-    });
-    /*graphics.loadTexture(this.texture, function(tex) {
-        self.boundTexture = tex;
-    });*/
     this.normalizeRotation();
     if(this.init) this.init();
 };

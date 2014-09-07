@@ -21,21 +21,30 @@ var Graphics = function(width, height, cubes, gl, callback) {
         self.gl.enable(self.gl.BLEND);
         self.gl.blendFunc(self.gl.SRC_ALPHA, self.gl.ONE_MINUS_SRC_ALPHA);
         self.resize(width, height);
-        callback();
-    });
-    this.backgroundPlane;
-    this.backgroundTexture;
-    this.brokenTexture;
-    this.loadModel("plane.js", function(model) {
-        self.backgroundPlane = model;
-    });
-    this.loadTexture("circle.png", function(tex) {
-        self.backgroundTexture = tex;
-    });
-    this.loadTexture("damage.png", function(tex) {
-        self.brokenTexture = tex;
+		self.loadTexture("damage.png", function(tex) {
+			self.brokenTexture = tex;
+				self.loadModel("cube.js", function(model) {
+					self.modelCube = model;
+					self.prepare();
+					callback();
+				});
+		});
     });
 };
+
+Graphics.prototype.start = function() {
+	this.redraw();
+};
+
+Graphics.prototype.prepare = function() {
+	this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.modelCube.vertices);
+	this.gl.vertexAttribPointer(this.shader.vertexPositionAttribute, 3, this.gl.FLOAT, false, 0, 0);
+	this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.modelCube.textureMap);
+	this.gl.vertexAttribPointer(this.shader.textureCoordAttribute, 2, this.gl.FLOAT, false, 0, 0);
+    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.modelCube.faces);
+    this.gl.uniform1i(this.shader.samplerUniform, 1);
+    this.gl.uniform1i(this.shader.samplerUniform2, 0);
+}
 
 Graphics.prototype.displayRing = function() {
     this.ring = true;
@@ -118,9 +127,6 @@ Graphics.prototype.resize = function(width, height) {
     this.gl.viewport(0, 0, this.width, this.height);
 }
 
-Graphics.prototype.start = function() {
-    this.redraw();
-};
 
 Graphics.prototype.initShaders = function(shaders, callback) {
     var self = this;
@@ -170,50 +176,34 @@ Graphics.prototype.redraw = function() {
     var self = this;
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     mat4.perspective(this.projectionMatrix, 45, this.width / this.height, 0.1, 1000.0);
+    this.gl.uniformMatrix4fv(this.shader.projectionMatrixUniform, false, this.projectionMatrix);
     mat4.identity(this.modelMatrix);
     mat4.identity(this.viewMatrix);
     mat4.rotateX(this.viewMatrix, this.viewMatrix, this.rotation[0]);
     mat4.rotateY(this.viewMatrix, this.viewMatrix, this.rotation[1]);
     mat4.rotateZ(this.viewMatrix, this.viewMatrix, this.rotation[2]);
     mat4.translate(this.viewMatrix, this.viewMatrix, this.position);
-    this.gl.uniform1i(this.shader.samplerUniform, 0);
-    this.gl.uniform1i(this.shader.samplerUniform2, 1);
-    if(this.ring && this.backgroundPlane && this.backgroundTexture) {
-        this.push();
-        mat4.scale(this.modelMatrix, this.modelMatrix, [10.5, 10.5, 1]);
-        mat4.translate(this.modelMatrix, this.modelMatrix, [0, 0, -.6]);
-        this.drawModel(this.backgroundPlane, this.backgroundTexture, 1.);
-        this.pop();
-    }
+    this.gl.uniformMatrix4fv(this.shader.viewMatrixUniform, false, this.viewMatrix);
     this.drawCubes();
     window.requestAnimationFrame(function() {
         self.redraw();
     });
 };
 
-Graphics.prototype.drawModel = function(model, texture, alpha, texture2) {
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, model.vertices);
-    this.gl.vertexAttribPointer(this.shader.vertexPositionAttribute, 3, this.gl.FLOAT, false, 0, 0);
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, model.textureMap);
-    this.gl.vertexAttribPointer(this.shader.textureCoordAttribute, 2, this.gl.FLOAT, false, 0, 0);
-    this.gl.activeTexture(this.gl.TEXTURE0);
+Graphics.prototype.drawCube = function(texture, alpha) {
+    this.gl.activeTexture(this.gl.TEXTURE1);
     this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-    if(texture2) {
-        this.gl.activeTexture(this.gl.TEXTURE1);
-        this.gl.bindTexture(this.gl.TEXTURE_2D, texture2);
-    }
-    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, model.faces);
-    this.gl.uniformMatrix4fv(this.shader.projectionMatrixUniform, false, this.projectionMatrix);
+	this.gl.activeTexture(this.gl.TEXTURE0);
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.brokenTexture);
     this.gl.uniformMatrix4fv(this.shader.modelMatrixUniform, false, this.modelMatrix);
-    this.gl.uniformMatrix4fv(this.shader.viewMatrixUniform, false, this.viewMatrix);
     this.gl.uniform1f(this.shader.alphaUniform, alpha);
-    this.gl.drawElements(this.gl.TRIANGLES, model.indexCount, this.gl.UNSIGNED_SHORT, 0);
+    this.gl.drawElements(this.gl.TRIANGLES, this.modelCube.indexCount, this.gl.UNSIGNED_SHORT, 0);
 }
 
 Graphics.prototype.drawCubes = function() {
     for(var c in this.cubes) {
         var cube = this.cubes[c];
-        if(cube && cube.model) {
+        if(cube) {
             this.push();
             mat4.rotateZ(this.modelMatrix, this.modelMatrix, cube.rotation);
             var offset = (1 - cube.scale) / 2;
@@ -222,12 +212,11 @@ Graphics.prototype.drawCubes = function() {
             mat4.translate(this.modelMatrix, this.modelMatrix, [offset, offset, offset]);
             if(cube.initHealth !== undefined) {
                 this.gl.uniform1f(this.shader.damageUniform, cube.getHealthRel());
-                this.drawModel(cube.model, cube.boundTexture, cube.alpha, this.brokenTexture);
             }
-            else {
-                this.gl.uniform1f(this.shader.damageUniform, 0.);
-                this.drawModel(cube.model, cube.boundTexture, cube.alpha);
-            }
+			else {
+                this.gl.uniform1f(this.shader.damageUniform, 0.0);
+			}
+			this.drawCube(cube.boundTexture, cube.alpha);
             this.pop();
         }
     }

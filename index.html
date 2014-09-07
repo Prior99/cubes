@@ -30,11 +30,24 @@
                 </div>
             </div>
         </script>
-        <div id="wrapper">asd
-        </div>
-        <canvas width="800" height="600" id="canvas"></canvas>
-        <canvas width="800" height="600" id="hud"></canvas>
+		<div id="outer">
+			<div id="wrapper">asd
+			</div>
+			<canvas width="800" height="600" id="canvas"></canvas>
+			<canvas width="800" height="600" id="hud"></canvas>
+		</div>
         <script type="text/javascript">
+		
+			window.requestAnimationFrame = 
+				window.requestAnimationFrame       || 
+				window.webkitRequestAnimationFrame || 
+				window.mozRequestAnimationFrame    || 
+				window.oRequestAnimationFrame      || 
+				window.msRequestAnimationFrame     || 
+				function(callback, element){
+					window.setTimeout(callback, 1000 / 60);
+				};
+		
             var graphics, canvas, cubes, hud, input;
             canvas = $("#canvas")[0];
             hud = $("#hud")[0];
@@ -45,13 +58,15 @@
             function requestFS() {
                 displayFullscreen();
                 function down(){
-                    document.body.requestFullscreen =
-                        document.body.requestFullscreen ||
-                        document.body.webkitRequestFullscreen ||
-                        document.body.mozRequestFullscreen;
-                    document.body.requestFullscreen();
-                    document.onclick = undefined;
-                    initMenu();
+					var elem = document.getElementById("outer");
+                    elem.requestFullscreen =
+                        elem.requestFullscreen ||
+                        elem.webkitRequestFullscreen ||
+                        elem.mozRequestFullScreen;
+					if(elem.requestFullscreen) {
+						elem.requestFullscreen();
+					}
+					initMenu();
                     input.removeActionListener(this);
                 }
                 input.addActionListener(down);
@@ -62,7 +77,7 @@
                 var ctx = hud.getContext("2d");
                 ctx.clearRect(0, 0, hud.width, hud.height);
                 var size = 50;
-                var text = "Click/Touch to Start";
+                var text = "Click to Start";
                 ctx.font = size+"px akashiregular";
                 ctx.strokeStyle = "black";
                 ctx.fillStyle = "#ffcb2d";
@@ -151,33 +166,40 @@
                 stopped = false;
                 resize();
                 graphics.hideRing();
+				var lst;
                 animationInterval = setInterval(function() {
-                    window.requestAnimationFrame(function() {
-                        if(stopped) return;
-                        var remove = [];
-                        for(var c in cubes) {
-                            var cube = cubes[c];
-                            cube.tick();
-                            if(cube.distance < 0) remove.push(cube);
-                        }
-                        for(var c in remove) {
-                            cubes.splice(cubes.indexOf(remove[c]), 1);
-                        }
-                        if(Math.random() < .1) {
-                            getCube("fake.js", function(cube) {
-                                cube.distance = 16;
-                                cube.rotation = Math.PI * 3/4 + Math.random()*Math.PI/2;
-                                cube.speed = Math.random()*0.1 + 0.01;
-                                cubes.push(cube);
-                                if(Math.random() < .1) {
-                                    cube.setTexture("energy.png");
-                                }
-                                graphics.setPosition(8, 0, -5);
-                            });
-                        }
-                    });
+					//console.log(Date.now() - lst - 1000/60);
+					lst = Date.now();
+					if(stopped) return;
+					for(var c in cubes) {
+						var cube = cubes[c];
+						cube.tick();
+						if(cube.distance < 0) delete cubes[c];
+					}
+					if(Math.random() < .1) {
+						getCube("fake.js", function(cube) {
+							cube.distance = 16;
+							cube.rotation = Math.PI * 3/4 + Math.random()*Math.PI/2;
+							cube.speed = Math.random()*0.1 + 0.01;
+							if(Math.random() < .1) {
+								cube.setTexture("energy.png");
+							}
+							addToCubes(cube);
+							graphics.setPosition(8, 0, -5);
+						});
+					}
                 }, 1000/60);
             }
+			
+			function addToCubes(cube) {
+				for(var i = 0; i < cubes.length; i++) {
+					if(cubes[i] === undefined) {
+						cubes[i] = cube;
+						break;
+					}
+				}
+				if(i == cubes.length) cubes.push(cube);
+			}
 
             function stopAnimation() {
                 stopped = true;
@@ -185,6 +207,10 @@
                 cubes.length = 0;
                 clearInterval(animationInterval);
             }
+			
+			function clearHud() {
+				hud.getContext("2d").clearRect(0, 0, hud.width, hud.height);
+			}
 
             function initMenu() {
                 $("#wrapper").css({"visibility" : "visible"}).html("<h1>ChunkZ</h1>");
@@ -204,6 +230,7 @@
                             input.removeEscListener(onEsc);
                             startAnimation();
                             initMenu();
+							clearHud();
                         };
 						game.start();
                         input.addEscListener(onEsc);
@@ -223,6 +250,7 @@
                             input.removeEscListener(onEsc);
                             startAnimation();
                             initMenu();
+							clearHud();
                         };
 						shop.start();
                         input.addEscListener(onEsc);

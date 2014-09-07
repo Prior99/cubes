@@ -122,9 +122,7 @@ Shop.prototype.setupUI = function() {
 		}
 	}
 	this.interval = setInterval(function() {
-		window.requestAnimationFrame(function() {
-			self.tick();
-		});
+		self.tick();
 	}, 1000/60);
 	window.addEventListener('resize', function() {
 		self.redrawHUD();

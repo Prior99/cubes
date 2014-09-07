@@ -59,9 +59,7 @@ Game.prototype.start = function() {
 	var self = this;
 	this.tickNum = 0;
 	this.interval = setInterval(function() {
-		window.requestAnimationFrame(function() {
-			self.tick();
-		});
+		self.tick();
 	}, 1000/60);
 	for(var i = 0; i < self.storage.cubes.length; i++) {
 		(function(i) {
@@ -69,7 +67,7 @@ Game.prototype.start = function() {
 			if(cube) {
 				getCube(cube.type, function(cube) {
 					cube.rotation = (Math.PI * 2/self.storage.cubes.length) * i;
-					self.cubes.push(cube);
+					addToCubes(cube);
 				});
 			}
 		})(i);
@@ -90,14 +88,10 @@ Game.prototype.getCubesPerSecond = function() {
 
 Game.prototype.tick = function() {
 	this.speed += 0.000003;
-	var remove = [];
 	for(var c in this.cubes) {
 		var cube = this.cubes[c];
 		cube.tick(this);
-		if(!cube.enabled) remove.push(cube);
-	}
-	for(var c in remove) {
-		this.cubes.splice(this.cubes.indexOf(remove[c]), 1);
+		if(!cube.enabled) delete this.cubes[c];
 	}
 	this.tickNum++;
 	if(parseInt(this.tickNum % (START_C - 50 * 10 * this.speed)) == 0) this.spawnEnemy();
@@ -119,13 +113,13 @@ Game.prototype.redrawHUD = function() {
 	//Red
 	ctx.fillStyle = "#ff5555";
 	ctx.textAlign = "right";
-	ctx.fillText(this.storage.red, this.underlay.width/2 - 10, this.underlay.height*3/4 + size * 2/5);
-	ctx.strokeText(this.storage.red, this.underlay.width/2 - 10, this.underlay.height*3/4 + size * 2/5);
+	ctx.fillText(this.storage.red, this.underlay.width/2 - 10, this.underlay.height*4/5 + size * 2/5);
+	ctx.strokeText(this.storage.red, this.underlay.width/2 - 10, this.underlay.height*4/5 + size * 2/5);
 	//Blue
 	ctx.fillStyle = "#5555ff";
 	ctx.textAlign = "left";
-	ctx.fillText(this.storage.blue, this.underlay.width/2 + 10, this.underlay.height*3/4 + size * 2/5);
-	ctx.strokeText(this.storage.blue, this.underlay.width/2 + 10, this.underlay.height*3/4 + size * 2/5);
+	ctx.fillText(this.storage.blue, this.underlay.width/2 + 10, this.underlay.height*4/5 + size * 2/5);
+	ctx.strokeText(this.storage.blue, this.underlay.width/2 + 10, this.underlay.height*4/5 + size * 2/5);
 	//Lifes
 	ctx.fillStyle = "#ffcb2d";
 	ctx.textAlign = "center";
@@ -164,7 +158,7 @@ Game.prototype.spawnEnemy = function() {
 		cube.rotation = a;
 		cube.distance = 20;
 		cube.normalizeRotation();
-		self.cubes.push(cube);
+		addToCubes(cube);
 	}
 	if(Math.random() < .1) {
 		getCube("energy.js", function(cube) {

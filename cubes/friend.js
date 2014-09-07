@@ -22,7 +22,7 @@ function(callback) {
         this.initHealth = h;
     };
     cube.getHealthRel = function() {
-        return 0.9 - Math.floor((this.health/this.initHealth) * 9) / 10;
+        return (0.9 - Math.floor((this.health/this.initHealth) * 9) / 10).toFixed(1);
     };
     callback(cube);
 }
