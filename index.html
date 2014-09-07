@@ -30,12 +30,10 @@
                 </div>
             </div>
         </script>
-		<div id="outer">
-			<div id="wrapper">asd
-			</div>
-			<canvas width="800" height="600" id="canvas"></canvas>
-			<canvas width="800" height="600" id="hud"></canvas>
+		<div id="wrapper">asd
 		</div>
+		<canvas width="800" height="600" id="canvas"></canvas>
+		<canvas width="800" height="600" id="hud"></canvas>
         <script type="text/javascript">
 		
 			window.requestAnimationFrame = 
@@ -58,7 +56,7 @@
             function requestFS() {
                 displayFullscreen();
                 function down(){
-					var elem = document.getElementById("outer");
+					var elem = document.body;
                     elem.requestFullscreen =
                         elem.requestFullscreen ||
                         elem.webkitRequestFullscreen ||
